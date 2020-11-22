@@ -1,0 +1,59 @@
+syntax = "proto3";
+package pb;
+
+
+
+message SignInReq {
+    string phone_number = 1;
+    string code = 2;
+    int64 device_id = 3;
+}
+message SignInResp {
+    int64 user_id = 1;
+    string token = 2;
+}
+
+message User {
+    int64 user_id = 1; // 用户id
+    string nickname = 2; // 昵称
+    int32 sex = 3; // 性别
+    string avatar_url = 4; // 头像地址
+    string extra = 5; // 附加字段
+    int64 create_time = 6; // 创建时间
+    int64 update_time = 7; // 更新时间
+}
+
+message GetUserReq {
+    int64 user_id = 1; // 用户id
+}
+message GetUserResp {
+    User user = 1; // 用户信息
+}
+
+message UpdateUserReq {
+    string nickname = 1; // 昵称
+    int32 sex = 2; // 性别
+    string avatar_url = 3; // 头像地址
+    string extra = 4; // 附加字段
+}
+message UpdateUserResp {
+
+}
+
+message SearchUserReq{
+    string key = 1;
+}
+message SearchUserResp{
+    repeated User users = 1;
+}
+
+service UserExt {
+    // 登录
+    rpc SignIn (SignInReq) returns (SignInResp);
+    // 获取用户信息
+    rpc GetUser (GetUserReq) returns (GetUserResp);
+    // 更新用户信息
+    rpc UpdateUser (UpdateUserReq) returns (UpdateUserResp);
+    // 搜索用户(这里简单数据库实现，生产环境建议使用ES)
+    rpc SearchUser (SearchUserReq) returns (SearchUserResp);
+}
