@@ -1,5 +1,6 @@
 import 'package:device_info/device_info.dart';
 import 'package:fim/dao/message_dao.dart';
+import 'package:fim/dao/new_friend_dao.dart';
 import 'package:fim/dao/recent_contact_dao.dart';
 import 'package:fim/data/friends.dart';
 import 'package:fim/data/preferences.dart';
@@ -66,17 +67,18 @@ class InitPage extends StatelessWidget {
     }
 
     // 初始化好友信息
-    Friends.init();
+    await Friends.init();
 
     // 初始化数据库连接
     // 初始化最近联系人
     await RecentContactDao.init();
     // 初始化消息
     await MessageDao.init();
+    // 初始化新好友
+    NewFriendDao.init();
 
     // 长连接登录
-    socketManager = SocketManager();
-    await socketManager.connect("112.126.102.84", 8080);
+    await SocketManager().connect("112.126.102.84", 8080);
 
     print("跳转至主页");
     Navigator.pushReplacement(

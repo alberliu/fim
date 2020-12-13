@@ -1,10 +1,8 @@
 import 'dart:async';
 import 'package:fim/dao/recent_contact_dao.dart';
-import 'package:fim/data/friends.dart';
+import 'package:fim/data/stream.dart';
 import 'package:fim/model/recent_contact.dart';
-import 'package:fim/net/socket_manager.dart';
 import 'package:fim/page/chat/chat_page.dart';
-import 'package:fim/pb/conn.ext.pb.dart' as pb;
 import 'package:fim/theme/color.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -19,6 +17,7 @@ class _RecentContactPageState extends State<RecentContactPage> {
   List<RecentContact> contacts = List();
   StreamSubscription contactSubscription;
   StreamSubscription readSubscription;
+  StreamSubscription friendsChangeSubscription;
 
   @override
   void initState() {
@@ -35,12 +34,15 @@ class _RecentContactPageState extends State<RecentContactPage> {
     // 监听网络事件
     contactSubscription = contactStream.listen(
       (event) {
+        print("contact_event_in:$event");
         bool has = false;
         for (var contact in contacts) {
           if (contact.objectType == event.objectType &&
               contact.objectId == event.objectId) {
+            print("contact_event_update");
+            contact.name = event.name;
+            contact.avatarUrl = event.avatarUrl;
             contact.lastTime = event.lastTime;
-            contact.lastUserId = event.lastUserId;
             contact.lastMessage = event.lastMessage;
             contact.unread = contact.unread + event.unread;
             contacts.sort((left, right) => right.lastTime - left.lastTime);
@@ -49,16 +51,17 @@ class _RecentContactPageState extends State<RecentContactPage> {
           }
         }
         if (!has) {
+          print("contact_event_insert");
           contacts.insert(0, event);
         }
         setState(() {});
       },
     );
 
-    // 监听网络事件
+    // 监听消息已读事件
     readSubscription = readStream.listen(
       (event) {
-        print("read_event$event");
+        print("read_event:$event");
         bool has = false;
         for (var contact in contacts) {
           if (contact.objectType == event.objectType &&
@@ -71,6 +74,15 @@ class _RecentContactPageState extends State<RecentContactPage> {
         }
       },
     );
+
+    // 监听联系人信息变更事件
+    friendsChangeSubscription = friendsChangeStream.listen(
+      (event) async {
+        print("friendsChange event");
+        contacts = await RecentContactDao.list();
+        setState(() {});
+      },
+    );
   }
 
   @override
@@ -78,6 +90,7 @@ class _RecentContactPageState extends State<RecentContactPage> {
     super.dispose();
     contactSubscription.cancel();
     readSubscription.cancel();
+    friendsChangeSubscription.cancel();
   }
 
   @override
@@ -88,19 +101,17 @@ class _RecentContactPageState extends State<RecentContactPage> {
         separatorBuilder: (BuildContext context, int index) {
           return Divider(
             color: backgroundColor,
-            indent: 75,
+            indent: 65,
             height: 0,
-            thickness: 1,
+            thickness: 2,
           );
         },
         itemCount: contacts.length,
         itemBuilder: (BuildContext context, int index) {
           var contact = contacts[index];
-          var friend = Friends.get(Int64(contact.objectId));
-          print(friend);
           return _ListItem(
-            icon: friend.avatarUrl,
-            name: friend.nickname,
+            icon: contact.avatarUrl,
+            name: contact.name,
             message: contact.lastMessage,
             time: RecentContact.formatTime(contact.lastTime),
             unread: contact.unread,
@@ -111,7 +122,7 @@ class _RecentContactPageState extends State<RecentContactPage> {
                   builder: (context) => ChatPage(
                     objectType: Int64(contact.objectType),
                     objectId: Int64(contact.objectId),
-                    friendNickname: friend.nickname,
+                    name: contact.name,
                   ),
                 ),
               );
@@ -153,20 +164,18 @@ class _ListItemState extends State<_ListItem> {
       behavior: HitTestBehavior.opaque,
       child: Container(
         padding: EdgeInsets.only(left: 5),
-        height: 70.0,
+        height: 60.0,
         child: Row(
           children: <Widget>[
             Container(
-              width: 70,
-              height: 70,
+              width: 60,
+              height: 60,
               child: Stack(
                 children: [
                   Container(
-                    width: 70,
-                    height: 70,
                     padding: EdgeInsets.all(10),
                     child: ClipRRect(
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(7),
                       child: Image.network(widget.icon),
                     ),
                   ),
@@ -208,8 +217,10 @@ class _ListItemState extends State<_ListItem> {
                         children: <Widget>[
                           Text(
                             widget.name,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                             style: TextStyle(
-                              fontSize: 18.0,
+                              fontSize: 15.0,
                             ),
                           ),
                           Container(
@@ -220,7 +231,7 @@ class _ListItemState extends State<_ListItem> {
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
-                                fontSize: 15.0, color: Colors.black45),
+                                fontSize: 12.0, color: Colors.black45),
                           )
                         ],
                       ),

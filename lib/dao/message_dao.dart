@@ -4,11 +4,11 @@ import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
 class MessageDao {
-  static Database messageDatabase;
+  static Database database;
 
   static init() async {
-    messageDatabase = await openDatabase(
-      join(await getDatabasesPath(), 'message.db'),
+    database = await openDatabase(
+      join(await getDatabasesPath(),getUserId().toString()+ '/message.db'),
       onCreate: (db, version) {
         print("创建数据库 message");
         return _onCreate(db, version);
@@ -24,6 +24,8 @@ class MessageDao {
             object_type INTEGER, 
             object_id INTEGER, 
             sender_id INTEGER,
+            sender_nickname Text,
+            sender_avatar_url Text,
             to_user_ids Text,
             message_type INTEGER,
             message_content BLOB,
@@ -41,16 +43,12 @@ class MessageDao {
   }
 
   static void add(Message message) async {
-    try {
-      await messageDatabase.insert("message", message.toMap());
-      setMaxSYN(message.seq);
-    } catch (e) {
-      print(e);
-    }
+    await database.insert("message", message.toMap());
+    setMaxSYN(message.seq);
   }
 
   static void updateStatus(int objectType, int objectId, int status) async {
-    await messageDatabase.update(
+    await database.update(
       "message",
       {"status": status},
       where: "object_type = ? and object_id = ?",
@@ -60,7 +58,7 @@ class MessageDao {
 
   static Future<List<Message>> list(
       int objectType, int objectId, int seq, int limit) async {
-    List<Map> maps = await messageDatabase.query(
+    List<Map> maps = await database.query(
       "message",
       where: "object_type = ? and object_id = ? and seq < ?",
       whereArgs: [objectType, objectId, seq],

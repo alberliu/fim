@@ -2,66 +2,39 @@ import 'dart:async';
 import 'dart:ffi';
 import 'package:fim/dao/message_dao.dart';
 import 'package:fim/dao/recent_contact_dao.dart';
-import 'package:fim/data/friends.dart';
+import 'package:fim/data/open_object.dart';
 import 'package:fim/data/preferences.dart';
+import 'package:fim/data/stream.dart';
 import 'package:fim/model/message.dart' as model;
 import 'package:fim/model/recent_contact.dart';
+import 'package:fim/page/friend/friend_page.dart';
+import 'package:fim/page/group/group_info_page.dart';
 import 'package:fim/pb/conn.ext.pb.dart' as pb;
 import 'package:fim/pb/logic.ext.pb.dart';
 import 'package:fim/net/api.dart';
-import 'package:fim/net/socket_manager.dart';
+import 'package:fim/pb/push.ext.pb.dart';
+import 'package:fim/theme/color.dart';
+import 'package:fim/theme/size.dart';
 import 'package:fixnum/fixnum.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
-class ChatPage extends StatelessWidget {
+class ChatPage extends StatefulWidget {
   Int64 objectType;
   Int64 objectId;
-  String friendNickname;
+  String name;
 
-  ChatPage({Key key, this.objectType, this.objectId, this.friendNickname})
+  ChatPage({Key key, this.objectType, this.objectId, this.name})
       : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(friendNickname),
-        centerTitle: true,
-        actions: <Widget>[
-          // 非隐藏的菜单
-          new IconButton(
-              icon: new Icon(Icons.more_horiz),
-              tooltip: 'Add Alarm',
-              onPressed: () {}),
-        ],
-      ),
-      body: ChatBody(objectType: objectType, objectId: objectId),
-    );
-  }
+  _ChatPageState createState() => _ChatPageState();
 }
 
-class ChatBody extends StatefulWidget {
-  Int64 objectType;
-  Int64 objectId;
-
-  ChatBody({Key key, this.objectType, this.objectId}) : super(key: key);
-
-  @override
-  _ChatBodyState createState() => _ChatBodyState(objectType, objectId);
-}
-
-class _ChatBodyState extends State<ChatBody> {
-  Int64 objectType;
-  Int64 objectId;
-  String avatarUrl =
-      "https://tse1-mm.cn.bing.net/th/id/OIP.wPFjG9_jdid8NDqacCscPgAAAA?w=135&h=150&c=7&o=5&dpr=2&pid=1.7";
-
+class _ChatPageState extends State<ChatPage> {
   ScrollController _scrollController = ScrollController();
   TextEditingController _editingController = TextEditingController();
   List<model.Message> messages = List();
-
-  _ChatBodyState(this.objectType, this.objectId);
 
   StreamSubscription subscription;
 
@@ -69,49 +42,68 @@ class _ChatBodyState extends State<ChatBody> {
   void initState() {
     super.initState();
     print("chatBody initState");
+
+    OpenedObject.open(widget.objectType, widget.objectId);
+
     initData();
     readMessage();
   }
 
   void initData() async {
-    print("object,type:$objectType,id:$objectId");
-    // 初始化好友信息
-    avatarUrl = Friends.get(objectId).avatarUrl;
-
+    print("object,type:${widget.objectType},id:${widget.objectId}");
     // 初始化消息列表
-    var list = await MessageDao.list(
-        objectType.toInt(), objectId.toInt(), Int64.MAX_VALUE.toInt(), 30);
+    var list = await MessageDao.list(widget.objectType.toInt(),
+        widget.objectId.toInt(), Int64.MAX_VALUE.toInt(), 20);
     setState(() {
       messages.addAll(list);
     });
 
     subscription = messageStream.listen((event) {
-      if (!(event.objectType == objectType.toInt() &&
-          event.objectId == objectId.toInt())) {
-        return;
-      }
+      if (event.objectType != widget.objectType.toInt()) return;
+      if (event.objectId != widget.objectId.toInt()) return;
 
       if (event.messageType == pb.MessageType.MT_TEXT.value) {
         setState(() {
           messages.insert(0, event);
         });
       }
+
+      // 指令消息
+      if (event.messageType == pb.MessageType.MT_COMMAND.value) {
+        var command = pb.Command.fromBuffer(event.messageContent);
+        print("指令消息：${command.code}");
+        // 群组信息更新
+        if (command.code == PushCode.PC_UPDATE_GROUP.value) {
+          var updateGroupPush = UpdateGroupPush.fromBuffer(command.data);
+          widget.name = updateGroupPush.name;
+          messages.insert(0, event);
+          setState(() {});
+        }
+        if (command.code == PushCode.PC_ADD_GROUP_MEMBERS.value) {
+          messages.insert(0, event);
+          setState(() {});
+        }
+      }
     });
 
     _scrollController.addListener(loadMore);
   }
 
-  readMessage(){
-    RecentContactDao.updateRead(objectType.toInt(), objectId.toInt());
-    var contact=RecentContact();
-    contact.objectType = objectType.toInt();
-    contact.objectId = objectId.toInt();
+  readMessage() {
+    RecentContactDao.updateRead(
+        widget.objectType.toInt(), widget.objectId.toInt());
+    var contact = RecentContact();
+    contact.objectType = widget.objectType.toInt();
+    contact.objectId = widget.objectId.toInt();
     readController.add(contact);
   }
 
   @override
   void dispose() {
     super.dispose();
+
+    OpenedObject.close();
+
     if (subscription != null) {
       subscription.cancel();
     }
@@ -119,6 +111,51 @@ class _ChatBodyState extends State<ChatBody> {
 
   @override
   Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        toolbarHeight: appBarHeight,
+        title: Text(widget.name),
+        centerTitle: true,
+        actions: <Widget>[
+          // 非隐藏的菜单
+          new IconButton(
+            icon: new Icon(Icons.more_horiz),
+            tooltip: 'Add Alarm',
+            onPressed: () async {
+              String changeName;
+              if (widget.objectType == model.Message.objectTypeUser) {
+                changeName = await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => FriendPage(friendId: widget.objectId),
+                  ),
+                );
+              }
+
+              if (widget.objectType == model.Message.objectTypeGroup) {
+                changeName = await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => GroupInfoPage(
+                        groupId: widget.objectId, name: widget.name),
+                  ),
+                );
+              }
+              if (changeName != null) {
+                widget.name = changeName;
+                setState(() {});
+              }
+            },
+          ),
+        ],
+        brightness: appBarBrightness,
+      ),
+      body: buildBody(context),
+    );
+  }
+
+  @override
+  Widget buildBody(BuildContext context) {
     print("chat_page build");
     return Container(
       child: Column(
@@ -126,8 +163,7 @@ class _ChatBodyState extends State<ChatBody> {
           Expanded(
             // 消息界面
             child: Container(
-              //padding: EdgeInsets.only(left: 10, right: 10),
-              color: Color(0xFFE0E0E0),
+              color: Colors.grey[200],
               child: Scrollbar(
                 child: ListView.builder(
                   itemCount: messages.length,
@@ -140,41 +176,60 @@ class _ChatBodyState extends State<ChatBody> {
               ),
             ),
           ),
+          // 消息发送区域
           Container(
-            // 消息发送界面
             color: Color(0xFFD6D6D6),
             child: Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: <Widget>[
                 Expanded(
                   child: Container(
-                    color: Colors.white,
-                    margin: EdgeInsets.only(
-                        top: 10, bottom: 10, left: 20, right: 20),
-                    child: TextField(
-                      maxLines: 2,
-                      minLines: 1,
-                      style: TextStyle(
-                        fontSize: 13,
-                        height: 0.8,
+                    padding: EdgeInsets.only(
+                        top: 10, bottom: 10, left: 10, right: 0),
+                    decoration: new BoxDecoration(
+                      borderRadius: new BorderRadius.circular((10.0)), // 圆角度
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(5),
+                      child: TextField(
+                        cursorWidth: 1,
+                        maxLines: 4,
+                        minLines: 1,
+                        style: TextStyle(
+                          fontSize: 16,
+                          height: 1,
+                        ),
+                        strutStyle: StrutStyle(
+                          forceStrutHeight: true,
+                          fontSize: 16,
+                          height: 1,
+                          leading: 0.5,
+                        ),
+                        decoration: InputDecoration(
+                          hintMaxLines: 1,
+                          helperMaxLines: 1,
+                          filled: true,
+                          fillColor: Colors.grey[200],
+                          border: InputBorder.none,
+                          isDense: true,
+                        ),
+                        controller: _editingController,
                       ),
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                      ),
-                      controller: _editingController,
                     ),
                   ),
                 ),
-                FlatButton(
-                  child: Container(
-                    width: 50,
-                    height: 30,
+                Container(
+                  //width: 70,
+                  height: 60,
+                  //color: Colors.red,
+                  alignment: Alignment.center,
+                  child: IconButton(
+                    //alignment: Alignment.bottomCenter,
                     color: Colors.green,
-                    child: Center(
-                      child: Text("发送"),
-                    ),
+                    icon: Icon(Icons.send),
+                    onPressed: sendMessage,
                   ),
-                  onPressed: onSendMessage,
-                )
+                ),
               ],
             ),
           ),
@@ -184,9 +239,32 @@ class _ChatBodyState extends State<ChatBody> {
   }
 
   Widget messageWidget(int index) {
-    var isMyMessage = messages[index].senderId == getUserId().toInt();
+    var message = messages[index];
+    if (message.messageType == pb.MessageType.MT_COMMAND.value) {
+      String text = message.getCommandText();
+      if (text != "") {
+        return Container(
+          padding: EdgeInsets.only(top: 15, bottom: 15),
+          alignment: Alignment.center,
+          child: Text(text),
+        );
+      }
+      return Container();
+    }
 
-    var text = pb.Text.fromBuffer(messages[index].messageContent).text;
+    var isMyMessage = message.senderId == getUserId().toInt();
+    var text = pb.Text.fromBuffer(message.messageContent).text;
+    Widget nameWidget;
+    if (!isMyMessage && widget.objectType != model.Message.objectTypeUser) {
+      nameWidget = Container(
+        margin: EdgeInsets.only(bottom: 5),
+        height: 20,
+        alignment: Alignment.centerLeft,
+        child: Text(message.senderNickname),
+      );
+    } else {
+      nameWidget = Container();
+    }
 
     return Container(
       margin: EdgeInsets.only(top: 10, bottom: 10, left: 10, right: 10),
@@ -205,33 +283,40 @@ class _ChatBodyState extends State<ChatBody> {
                   margin: EdgeInsets.only(right: 10),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(5),
-                    child: Image.network(avatarUrl, fit: BoxFit.cover),
+                    child: Image.network(message.senderAvatarUrl,
+                        fit: BoxFit.cover),
                   ),
                 ),
           Expanded(
-            child: Container(
-              alignment:
-                  isMyMessage ? Alignment.centerRight : Alignment.centerLeft,
-              child: Container(
-                padding: EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(5),
-                  color: isMyMessage ? Colors.green : Colors.white,
-                ),
-                child: Text(
-                  text,
-                  style: TextStyle(
-                    fontSize: 16.0,
-                    height: 1,
+            child: Column(
+              children: [
+                nameWidget,
+                Container(
+                  alignment: isMyMessage
+                      ? Alignment.centerRight
+                      : Alignment.centerLeft,
+                  child: Container(
+                    padding: EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(5),
+                      color: isMyMessage ? Colors.green : Colors.white,
+                    ),
+                    child: Text(
+                      text,
+                      style: TextStyle(
+                        fontSize: 16.0,
+                        height: 1,
+                      ),
+                      strutStyle: StrutStyle(
+                        forceStrutHeight: true,
+                        fontSize: 16,
+                        height: 1,
+                        leading: 0.5,
+                      ),
+                    ),
                   ),
-                  strutStyle: StrutStyle(
-                    forceStrutHeight: true,
-                    fontSize: 16,
-                    height: 1,
-                    leading: 0.5,
-                  ),
                 ),
-              ),
+              ],
             ),
           ),
           isMyMessage
@@ -259,13 +344,16 @@ class _ChatBodyState extends State<ChatBody> {
         _scrollController.position.maxScrollExtent) {
       //如果不是最后一页数据，则生成新的数据添加到list里面
       print("loadMore");
-      //page++;
-      //messages.addAll(getMessage(page));
-      //setState(() {});
+
+      var moreMessage = await MessageDao.list(widget.objectType.toInt(),
+          widget.objectId.toInt(), messages.last.seq, 20);
+
+      messages.addAll(moreMessage);
+      setState(() {});
     }
   }
 
-  void onSendMessage() async {
+  void sendMessage() async {
     print("send message");
     var text = _editingController.text.trim();
     if (text.length == 0) {
@@ -281,8 +369,8 @@ class _ChatBodyState extends State<ChatBody> {
 
     // 发送消息到服务器
     var request = SendMessageReq();
-    request.receiverType = pb.ReceiverType.valueOf(objectType.toInt());
-    request.receiverId = objectId;
+    request.receiverType = pb.ReceiverType.valueOf(widget.objectType.toInt());
+    request.receiverId = widget.objectId;
     request.messageType = pb.MessageType.MT_TEXT;
     request.messageContent = buffer;
     request.sendTime = now;
@@ -291,9 +379,11 @@ class _ChatBodyState extends State<ChatBody> {
         await logicClient.sendMessage(request, options: await getOptions());
 
     var message = model.Message();
-    message.objectType = objectType.toInt();
-    message.objectId = objectId.toInt();
+    message.objectType = widget.objectType.toInt();
+    message.objectId = widget.objectId.toInt();
     message.senderId = getUserId().toInt();
+    message.senderNickname = getNickname();
+    message.senderAvatarUrl = getAvatarUrl();
     message.toUserIds = ""; // todo
     message.messageType = pb.MessageType.MT_TEXT.value;
     message.messageContent = buffer;
@@ -302,7 +392,7 @@ class _ChatBodyState extends State<ChatBody> {
 
     MessageDao.add(message);
 
-    var contact = RecentContact.fromMessage(message);
+    var contact = await RecentContact.build(message);
     contact.unread = 0;
     RecentContactDao.add(contact);
     contactController.add(contact);

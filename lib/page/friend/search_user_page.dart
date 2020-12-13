@@ -1,8 +1,9 @@
 import 'package:fim/data/preferences.dart';
 import 'package:fim/net/api.dart';
-import 'package:fim/page/add_friend_page.dart';
+import 'package:fim/page/friend/add_friend_page.dart';
 import 'package:fim/pb/user.ext.pb.dart';
 import 'package:fim/theme/color.dart';
+import 'package:fim/theme/size.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -17,7 +18,11 @@ class _SearchUserPageState extends State<SearchUserPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("添加好友")),
+      appBar: AppBar(
+        toolbarHeight: appBarHeight,
+        title: Text("添加好友"),
+        brightness: appBarBrightness,
+      ),
       body: Column(
         children: [
           Container(
@@ -65,7 +70,11 @@ class _SearchUserPageState extends State<SearchUserPage> {
                   title: Text("${users[index].nickname}"),
                   onTap: () {
                     Navigator.pushReplacement(
-                        context, MaterialPageRoute(builder: (context) => AddFriendPage(user: users[index],)));
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => AddFriendPage(
+                                  user: users[index],
+                                )));
                   },
                 );
               },

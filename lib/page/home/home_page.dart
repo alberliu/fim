@@ -1,8 +1,11 @@
-import 'package:fim/page/home/friend_page.dart';
+import 'package:fim/page/group/create_group_page.dart';
+import 'package:fim/page/home/friends_page.dart';
 import 'package:fim/page/home/my_page.dart';
 import 'package:fim/page/home/recent_contact_page.dart';
-import 'package:fim/page/search_user_page.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:fim/page/friend/search_user_page.dart';
+import 'package:fim/theme/color.dart';
+import 'package:fim/theme/size.dart';
+import 'package:fim/widget/my_bottom_navigation_bar.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
@@ -17,7 +20,7 @@ class _HomePageState extends State<HomePage> {
   PageController _pageController = PageController(initialPage: 0);
   var views = [
     RecentContactPage(),
-    FriendPage(),
+    FriendsPage(),
     MyPage(),
   ];
 
@@ -31,17 +34,10 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        toolbarHeight: appBarHeight,
         title: Text("FIM"),
-        actions: <Widget>[
-          // 非隐藏的菜单
-          IconButton(
-            icon: new Icon(Icons.search),
-            tooltip: 'Add Alarm',
-            onPressed: () {},
-          ),
-
-          _popMenu()
-        ],
+        actions: <Widget>[_popMenu()],
+        brightness: appBarBrightness,
       ),
       body: PageView(
         controller: _pageController,
@@ -52,15 +48,21 @@ class _HomePageState extends State<HomePage> {
         },
         children: views,
       ),
-      bottomNavigationBar: BottomNavigationBar(
+      bottomNavigationBar: MyBottomNavigationBar(
         currentIndex: currentIndex,
-        type: BottomNavigationBarType.fixed,
-        fixedColor: Colors.green,
         items: [
-          BottomNavigationBarItem(icon: Icon(Icons.message), label: '消息'),
-          BottomNavigationBarItem(icon: Icon(Icons.people), label: '好友'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.person_outline), label: '我的'),
+          MyBottomNavigationBarItem(
+            Navigation(Icons.message, "消息", Colors.green),
+            Navigation(Icons.message, "消息", Colors.black54),
+          ),
+          MyBottomNavigationBarItem(
+            Navigation(Icons.people, "好友", Colors.green),
+            Navigation(Icons.people, "好友", Colors.black54),
+          ),
+          MyBottomNavigationBarItem(
+            Navigation(Icons.person_outline, "我的", Colors.green),
+            Navigation(Icons.person_outline, "我的", Colors.black54),
+          ),
         ],
         onTap: (index) {
           setState(() {
@@ -84,7 +86,7 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
           PopupMenuItem<String>(
-            value: '数学',
+            value: 'createGroup',
             child: Text(
               '发起群聊',
               style: TextStyle(color: Colors.white),
@@ -109,6 +111,10 @@ class _HomePageState extends State<HomePage> {
         if (key == "addFriend") {
           Navigator.push(context,
               MaterialPageRoute(builder: (context) => SearchUserPage()));
+        }
+        if (key == "createGroup") {
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => CreateGroupPage()));
         }
       },
     );

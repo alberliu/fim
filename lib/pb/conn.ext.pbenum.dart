@@ -62,13 +62,13 @@ class MessageType extends $pb.ProtobufEnum {
 class ReceiverType extends $pb.ProtobufEnum {
   static const ReceiverType RT_UNKNOWN = ReceiverType._(0, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'RT_UNKNOWN');
   static const ReceiverType RT_USER = ReceiverType._(1, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'RT_USER');
-  static const ReceiverType RT_NORMAL_GROUP = ReceiverType._(2, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'RT_NORMAL_GROUP');
+  static const ReceiverType RT_SMALL_GROUP = ReceiverType._(2, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'RT_SMALL_GROUP');
   static const ReceiverType RT_LARGE_GROUP = ReceiverType._(3, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'RT_LARGE_GROUP');
 
   static const $core.List<ReceiverType> values = <ReceiverType> [
     RT_UNKNOWN,
     RT_USER,
-    RT_NORMAL_GROUP,
+    RT_SMALL_GROUP,
     RT_LARGE_GROUP,
   ];
 

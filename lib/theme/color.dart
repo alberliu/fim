@@ -1,3 +1,7 @@
 import 'dart:ui';
 
-Color backgroundColor = Color(0xFFE0E0E0);
+import 'package:flutter/material.dart';
+
+Color backgroundColor = Colors.grey[200];
+
+Brightness appBarBrightness =Brightness.light;

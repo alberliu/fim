@@ -1,14 +1,15 @@
+import 'package:fim/data/preferences.dart';
 import 'package:fim/model/recent_contact.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
 class RecentContactDao {
-  static Database messageDatabase;
+  static Database database;
 
   static void init() async {
-    messageDatabase = await openDatabase(
-      join(await getDatabasesPath(), 'recent_contact.db'),
+    database = await openDatabase(
+      join(await getDatabasesPath(),
+          getUserId().toString() + '/recent_contact.db'),
       onCreate: (db, version) {
         print("创建数据库 recent_contact");
         return _onCreate(db, version);
@@ -23,6 +24,8 @@ class RecentContactDao {
             id INTEGER PRIMARY KEY,
             object_type INTEGER, 
             object_id INTEGER, 
+            name INTEGER, 
+            avatar_url Text, 
             last_time INTEGER,
             last_user_id INTEGER,
             last_message Text,
@@ -46,7 +49,7 @@ class RecentContactDao {
   }
 
   static Future<RecentContact> _get(int objectType, int objectId) async {
-    List<Map> maps = await messageDatabase.query(
+    List<Map> maps = await database.query(
       "recent_contact",
       where: 'object_type = ? and object_id = ?',
       whereArgs: [objectType, objectId],
@@ -58,18 +61,25 @@ class RecentContactDao {
   }
 
   static void _update(RecentContact contact) async {
-    await messageDatabase.insert("recent_contact", contact.toMap(),
+    await database.insert("recent_contact", contact.toMap(),
         conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
   static void updateRead(int objectType, int objectId) async {
-    await messageDatabase.rawUpdate(
+    await database.rawUpdate(
         "UPDATE recent_contact SET unread = 0 where object_type = ? and object_id = ?",
         [objectType, objectId]);
   }
 
+  static Future<void> updateInfo(
+      int objectType, int objectId, String name, String avatarUrl) async {
+    await database.rawUpdate(
+        "UPDATE recent_contact SET name = ?,avatar_url = ? where object_type = ? and object_id = ?",
+        [name, avatarUrl, objectType, objectId]);
+  }
+
   static Future<List<RecentContact>> list() async {
-    List<Map> maps = await messageDatabase.query(
+    List<Map> maps = await database.query(
       "recent_contact",
     );
 

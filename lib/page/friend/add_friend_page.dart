@@ -3,9 +3,10 @@ import 'package:fim/net/api.dart';
 import 'package:fim/pb/logic.ext.pb.dart';
 import 'package:fim/pb/user.ext.pb.dart';
 import 'package:fim/theme/color.dart';
+import 'package:fim/theme/size.dart';
+import 'package:fim/util/toast.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 
 class AddFriendPage extends StatefulWidget {
   User user;
@@ -23,7 +24,11 @@ class _AddFriendPageState extends State<AddFriendPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("添加好友")),
+      appBar: AppBar(
+        toolbarHeight: appBarHeight,
+        title: Text("添加好友"),
+        brightness: appBarBrightness,
+      ),
       body: Container(
         color: backgroundColor,
         child: Column(
@@ -96,7 +101,6 @@ class _AddFriendPageState extends State<AddFriendPage> {
               height: 50,
               color: Colors.white,
               child: TextField(
-                //maxLength: 50,
                 autofocus: true,
                 decoration: InputDecoration(
                   hintText: "描述",
@@ -133,17 +137,10 @@ class _AddFriendPageState extends State<AddFriendPage> {
     var request = AddFriendReq();
     request.friendId = this.widget.user.userId;
     request.remarks = remarksController.text;
-    request.description = remarksController.text;
+    request.description = descriptionController.text;
     await logicClient.addFriend(request, options: getOptions());
-    await Fluttertoast.showToast(
-        msg: "已经成功发送",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.CENTER,
-        timeInSecForIos: 1,
-        backgroundColor: Colors.black45,
-        textColor: Colors.white,
-        fontSize: 16.0);
 
+    toast("请求已成功发送");
     Navigator.pop(context);
   }
 }

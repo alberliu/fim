@@ -23,20 +23,15 @@ Future selectNotification(String payload) async {
   if (payload != null) {
     debugPrint('notification payload: $payload');
   }
-  //await Navigator.push(
-  //  context,
-  //  MaterialPageRoute<void>(builder: (context) => SecondScreen(payload)),
-  //);
 }
 
-void showNotifications(String title,String body) async {
+void showNotifications(String title, String body) async {
   const AndroidNotificationDetails androidPlatformChannelSpecifics =
       AndroidNotificationDetails(
           'your channel id', 'your channel name', 'your channel description',
           importance: Importance.max, priority: Priority.high, showWhen: false);
   const NotificationDetails platformChannelSpecifics =
       NotificationDetails(android: androidPlatformChannelSpecifics);
-  await flutterLocalNotificationsPlugin.show(
-      0,title ,body , platformChannelSpecifics,
-      payload: 'item x');
+  await flutterLocalNotificationsPlugin
+      .show(0, title, body, platformChannelSpecifics, payload: 'item x');
 }

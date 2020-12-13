@@ -14,6 +14,15 @@ const GroupType$json = const {
   ],
 };
 
+const MemberType$json = const {
+  '1': 'MemberType',
+  '2': const [
+    const {'1': 'GMT_UNKNOWN', '2': 0},
+    const {'1': 'GMT_ADMIN', '2': 1},
+    const {'1': 'GMT_MEMBER', '2': 2},
+  ],
+};
+
 const RegisterDeviceReq$json = const {
   '1': 'RegisterDeviceReq',
   '2': const [
@@ -77,6 +86,24 @@ const AgreeAddFriendResp$json = const {
   '1': 'AgreeAddFriendResp',
 };
 
+const SetFriendReq$json = const {
+  '1': 'SetFriendReq',
+  '2': const [
+    const {'1': 'friend_id', '3': 1, '4': 1, '5': 3, '10': 'friendId'},
+    const {'1': 'remarks', '3': 2, '4': 1, '5': 9, '10': 'remarks'},
+    const {'1': 'extra', '3': 8, '4': 1, '5': 9, '10': 'extra'},
+  ],
+};
+
+const SetFriendResp$json = const {
+  '1': 'SetFriendResp',
+  '2': const [
+    const {'1': 'friend_id', '3': 1, '4': 1, '5': 3, '10': 'friendId'},
+    const {'1': 'remarks', '3': 2, '4': 1, '5': 9, '10': 'remarks'},
+    const {'1': 'extra', '3': 8, '4': 1, '5': 9, '10': 'extra'},
+  ],
+};
+
 const Friend$json = const {
   '1': 'Friend',
   '2': const [
@@ -110,6 +137,7 @@ const CreateGroupReq$json = const {
     const {'1': 'introduction', '3': 3, '4': 1, '5': 9, '10': 'introduction'},
     const {'1': 'type', '3': 4, '4': 1, '5': 14, '6': '.pb.GroupType', '10': 'type'},
     const {'1': 'extra', '3': 5, '4': 1, '5': 9, '10': 'extra'},
+    const {'1': 'member_ids', '3': 6, '4': 3, '5': 3, '10': 'memberIds'},
   ],
 };
 
@@ -164,12 +192,12 @@ const Group$json = const {
   ],
 };
 
-const GetUserGroupsReq$json = const {
-  '1': 'GetUserGroupsReq',
+const GetGroupsReq$json = const {
+  '1': 'GetGroupsReq',
 };
 
-const GetUserGroupsResp$json = const {
-  '1': 'GetUserGroupsResp',
+const GetGroupsResp$json = const {
+  '1': 'GetGroupsResp',
   '2': const [
     const {'1': 'groups', '3': 1, '4': 3, '5': 11, '6': '.pb.Group', '10': 'groups'},
   ],
@@ -195,8 +223,9 @@ const UpdateGroupMemberReq$json = const {
   '2': const [
     const {'1': 'group_id', '3': 1, '4': 1, '5': 3, '10': 'groupId'},
     const {'1': 'user_id', '3': 2, '4': 1, '5': 3, '10': 'userId'},
-    const {'1': 'remarks', '3': 3, '4': 1, '5': 9, '10': 'remarks'},
-    const {'1': 'extra', '3': 4, '4': 1, '5': 9, '10': 'extra'},
+    const {'1': 'member_type', '3': 3, '4': 1, '5': 14, '6': '.pb.MemberType', '10': 'memberType'},
+    const {'1': 'remarks', '3': 4, '4': 1, '5': 9, '10': 'remarks'},
+    const {'1': 'extra', '3': 5, '4': 1, '5': 9, '10': 'extra'},
   ],
 };
 
@@ -238,8 +267,9 @@ const GroupMember$json = const {
     const {'1': 'sex', '3': 3, '4': 1, '5': 5, '10': 'sex'},
     const {'1': 'avatar_url', '3': 4, '4': 1, '5': 9, '10': 'avatarUrl'},
     const {'1': 'user_extra', '3': 5, '4': 1, '5': 9, '10': 'userExtra'},
-    const {'1': 'remarks', '3': 6, '4': 1, '5': 9, '10': 'remarks'},
-    const {'1': 'extra', '3': 7, '4': 1, '5': 9, '10': 'extra'},
+    const {'1': 'member_type', '3': 6, '4': 1, '5': 14, '6': '.pb.MemberType', '10': 'memberType'},
+    const {'1': 'remarks', '3': 7, '4': 1, '5': 9, '10': 'remarks'},
+    const {'1': 'extra', '3': 8, '4': 1, '5': 9, '10': 'extra'},
   ],
 };
 

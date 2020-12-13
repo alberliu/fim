@@ -26,3 +26,20 @@ class GroupType extends $pb.ProtobufEnum {
   const GroupType._($core.int v, $core.String n) : super(v, n);
 }
 
+class MemberType extends $pb.ProtobufEnum {
+  static const MemberType GMT_UNKNOWN = MemberType._(0, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'GMT_UNKNOWN');
+  static const MemberType GMT_ADMIN = MemberType._(1, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'GMT_ADMIN');
+  static const MemberType GMT_MEMBER = MemberType._(2, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'GMT_MEMBER');
+
+  static const $core.List<MemberType> values = <MemberType> [
+    GMT_UNKNOWN,
+    GMT_ADMIN,
+    GMT_MEMBER,
+  ];
+
+  static final $core.Map<$core.int, MemberType> _byValue = $pb.ProtobufEnum.initByValue(values);
+  static MemberType valueOf($core.int value) => _byValue[value];
+
+  const MemberType._($core.int v, $core.String n) : super(v, n);
+}
+

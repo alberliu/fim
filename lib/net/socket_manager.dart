@@ -3,62 +3,51 @@ import 'dart:ffi';
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:fim/dao/message_dao.dart';
+import 'package:fim/dao/new_friend_dao.dart';
 import 'package:fim/dao/recent_contact_dao.dart';
 import 'package:fim/data/friends.dart';
+import 'package:fim/data/groups.dart';
+import 'package:fim/data/open_object.dart';
 import 'package:fim/data/preferences.dart';
+import 'package:fim/data/stream.dart';
+import 'package:fim/model/new_friend.dart';
 import 'package:fim/model/recent_contact.dart';
 import 'package:fim/notification/notification.dart';
 import 'package:fim/pb/conn.ext.pb.dart' as pb;
 import 'package:fim/model/message.dart' as model;
-import 'package:fim/pb/push.pb.dart';
+import 'package:fim/pb/push.ext.pb.dart';
 import 'package:fixnum/fixnum.dart';
 import 'package:protobuf/protobuf.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
-SocketManager socketManager;
-
-StreamController<model.Message> messageController = StreamController();
-Stream<model.Message> messageStream =
-    messageController.stream.asBroadcastStream();
-
-StreamController<RecentContact> contactController = StreamController();
-Stream<RecentContact> contactStream =
-    contactController.stream.asBroadcastStream();
-
-StreamController<RecentContact> readController = StreamController();
-Stream<RecentContact> readStream = readController.stream.asBroadcastStream();
 
 class SocketManager {
   static const headerLen = 2;
-  Socket socket;
-  List<int> readBuffer = List<int>();
+  static Socket socket;
+  static List<int> readBuffer = List<int>();
 
   void connect(String host, int port) async {
-    try {
-      await Socket.connect(host, port, timeout: Duration(seconds: 2)).then((s) {
-        print("连接成功");
+    await Socket.connect(host, port, timeout: Duration(seconds: 2)).then((s) {
+      print("连接成功");
 
-        socket = s;
-        socket.listen(onData,
-            onError: onError, onDone: doneHandler, cancelOnError: false);
-      });
-    } catch (e) {
-      print("连接socket出现异常，e=${e.toString()}");
-      throw e;
-    }
+      socket = s;
+      socket.listen(onData,
+          onError: onError, onDone: doneHandler, cancelOnError: true);
+    });
 
     // 长连接登录
-    var prefs = await SharedPreferences.getInstance();
-
     var input = pb.SignInInput();
-    input.deviceId = Int64(prefs.getInt(deviceIdKey));
-    input.userId = Int64(prefs.getInt(userIdKey));
-    input.token = prefs.getString(tokenKey);
+    input.deviceId = getDeviceId();
+    input.userId = getUserId();
+    input.token = getToken();
 
     var buffer = encode(pb.PackageType.PT_SIGN_IN, input);
     socket.add(buffer);
     await socket.flush();
     print("长连接登录");
+
+    Future.delayed(Duration(seconds: 5), () {
+      socket.add(encode(pb.PackageType.PT_HEARTBEAT, null));
+      socket.flush();
+    });
   }
 
   void onData(Uint8List list) {
@@ -142,52 +131,6 @@ class SocketManager {
     print("socket关闭处理");
   }
 
-  handleMessage(pb.Message message) async {
-    print("handleMessage");
-    var messageModel = model.Message.fromPB(message, getUserId());
-    print(messageModel.toMap());
-
-    // 好友消息
-    if (messageModel.objectType == model.Message.objectTypeUser) {
-      // 保存到消息库
-      MessageDao.add(messageModel);
-      // 广播消息
-      messageController.add(messageModel);
-      // 保存到最近联系人
-      var contact = RecentContact.fromMessage(messageModel);
-      RecentContactDao.add(contact);
-      contactController.add(contact);
-      var friend = Friends.get(Int64(contact.objectId));
-      showNotifications(friend.nickname, contact.lastMessage);
-      return;
-    }
-
-    if (messageModel.objectType == model.Message.objectTypeAddFriend) {
-      // 保存到消息库
-      MessageDao.add(messageModel);
-      // 广播消息
-      messageController.add(messageModel);
-      return;
-    }
-
-    if (messageModel.objectType == model.Message.objectTypeAgreeAddFriend) {
-      // 重新加载好友列表
-      await Friends.init();
-      var contact = RecentContact();
-      contact.objectType = model.Message.objectTypeUser;
-      var command = pb.Command.fromBuffer(messageModel.messageContent);
-      var agreeAddFriendPush = AgreeAddFriendPush.fromBuffer(command.data);
-
-      contact.objectId = agreeAddFriendPush.friendId.toInt();
-      contact.lastMessage = "成功添加好友";
-      contact.lastTime = Int64(DateTime.now().millisecondsSinceEpoch).toInt();
-      contact.unread = 0;
-      RecentContactDao.add(contact);
-      contactController.add(contact);
-      return;
-    }
-  }
-
   Uint8List encode(pb.PackageType type, GeneratedMessage message,
       [Int64 requestId]) {
     // 构建输入流
@@ -217,5 +160,110 @@ class SocketManager {
     ack.deviceAck = seq;
     ack.receiveTime = Int64(DateTime.now().millisecondsSinceEpoch);
     socket.add(encode(pb.PackageType.PT_MESSAGE, ack, requestId));
+  }
+
+  handleMessage(pb.Message msg) async {
+    print("handleMessage");
+    var message = model.Message.fromPB(msg, getUserId());
+    print(message.toMap());
+
+    // 好友消息
+    if (message.objectType == model.Message.objectTypeUser) {
+      // 保存到消息库
+      await MessageDao.add(message);
+      // 广播消息
+      messageController.add(message);
+      // 保存到最近联系人
+      var contact = await RecentContact.build(message);
+      await RecentContactDao.add(contact);
+      contactController.add(contact);
+
+      if (!OpenedObject.isOpened(contact.objectType, contact.objectId)) {
+        showNotifications(contact.name, contact.lastMessage);
+      }
+      return;
+    }
+
+    // 群组消息
+    if (message.objectType == model.Message.objectTypeGroup) {
+      // 保存到消息库
+      await MessageDao.add(message);
+      // 广播消息
+      messageController.add(message);
+      // 保存到最近联系人
+      var contact = await RecentContact.build(message);
+      await RecentContactDao.add(contact);
+      contactController.add(contact);
+
+      if (!OpenedObject.isOpened(contact.objectType, contact.objectId)) {
+        showNotifications(contact.name, contact.lastMessage);
+      }
+
+      // 处理群组系统消息
+      if (msg.sender.senderType == pb.SenderType.ST_SYSTEM) {
+        if (message.messageType != pb.MessageType.MT_COMMAND.value) return;
+        var command = pb.Command.fromBuffer(message.messageContent);
+        print("command from net ${command.code}");
+        // 处理群组信息变更
+        if (command.code == PushCode.PC_UPDATE_GROUP.value) {
+          var updateGroupPush = UpdateGroupPush.fromBuffer(command.data);
+          print("command from net $updateGroupPush");
+          await RecentContactDao.updateInfo(
+            model.Message.objectTypeGroup,
+            message.objectId,
+            updateGroupPush.name,
+            updateGroupPush.avatarUrl,
+          );
+
+          friendsChangeController.add(1);
+
+          var group = await Groups.get(Int64(message.objectId));
+          group.name = updateGroupPush.name;
+          group.avatarUrl = updateGroupPush.avatarUrl;
+        }
+      }
+      return;
+    }
+
+    // 系统消息
+    if (message.objectType == model.Message.objectTypeSystem) {
+      var command = pb.Command.fromBuffer(message.messageContent);
+      // 添加好友
+      if (message.objectId == PushCode.PC_ADD_FRIEND.value) {
+        var addFriendPush = AddFriendPush.fromBuffer(command.data);
+        print("添加好友:$addFriendPush");
+        var newFriend = NewFriend(
+          userId: addFriendPush.friendId.toInt(),
+          nickname: addFriendPush.nickname,
+          avatarUrl: addFriendPush.avatarUrl,
+          description: addFriendPush.description,
+          time: message.sendTime,
+          status: NewFriend.unread,
+        );
+        // 写进新好友库
+        NewFriendDao.add(newFriend);
+        // 广播消息
+        newFriendController.add(newFriend);
+        return;
+      }
+      // 同意添加好友
+      if (message.objectId == PushCode.PC_AGREE_ADD_FRIEND.value) {
+        // 重新加载好友列表
+        await Friends.init();
+        var contact = RecentContact();
+        contact.objectType = model.Message.objectTypeUser;
+        var agreeAddFriendPush = AgreeAddFriendPush.fromBuffer(command.data);
+
+        contact.objectId = agreeAddFriendPush.friendId.toInt();
+        contact.name = agreeAddFriendPush.nickname;
+        contact.avatarUrl = agreeAddFriendPush.avatarUrl;
+        contact.lastMessage = "成功添加好友";
+        contact.lastTime = Int64(DateTime.now().millisecondsSinceEpoch).toInt();
+        contact.unread = 0;
+        RecentContactDao.add(contact);
+        contactController.add(contact);
+        return;
+      }
+    }
   }
 }

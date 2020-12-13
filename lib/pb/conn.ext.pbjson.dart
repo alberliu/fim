@@ -36,7 +36,7 @@ const ReceiverType$json = const {
   '2': const [
     const {'1': 'RT_UNKNOWN', '2': 0},
     const {'1': 'RT_USER', '2': 1},
-    const {'1': 'RT_NORMAL_GROUP', '2': 2},
+    const {'1': 'RT_SMALL_GROUP', '2': 2},
     const {'1': 'RT_LARGE_GROUP', '2': 3},
   ],
 };

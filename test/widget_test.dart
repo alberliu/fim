@@ -11,6 +11,9 @@ import 'package:flutter_test/flutter_test.dart';
 
 
 void main() {
-
+  var arr =[5,6,7,8];
+  for (var i in arr){
+    print("object$i ");
+  }
 }
 

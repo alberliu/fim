@@ -30,6 +30,10 @@ Int64 getUserId() {
   return Int64(sharedPreferences.getInt(userIdKey));
 }
 
+String getToken() {
+  return sharedPreferences.getString(tokenKey);
+}
+
 String getNickname() {
   return sharedPreferences.getString(nicknameKey);
 }
@@ -43,9 +47,9 @@ String getPhoneNumber() {
 }
 
 Future<void> setMaxSYN(int maxSYN) async {
-  return sharedPreferences.setInt(maxSYNKey, maxSYN);
+  return sharedPreferences.setInt("${getUserId()}_$maxSYNKey", maxSYN);
 }
 
 Int64 getMaxSYN() {
-  return Int64(sharedPreferences.getInt(maxSYNKey) ?? 0);
+  return Int64(sharedPreferences.getInt("${getUserId()}_$maxSYNKey") ?? 0);
 }
