@@ -1,3 +1,4 @@
+import 'package:fim/data/home_data.dart';
 import 'package:fim/page/group/create_group_page.dart';
 import 'package:fim/page/home/friends_page.dart';
 import 'package:fim/page/home/my_page.dart';
@@ -52,16 +53,38 @@ class _HomePageState extends State<HomePage> {
         currentIndex: currentIndex,
         items: [
           MyBottomNavigationBarItem(
-            Navigation(Icons.message, "消息", Colors.green),
-            Navigation(Icons.message, "消息", Colors.black54),
+            Navigation(
+              icon: Icons.message,
+              text: "消息",
+              color: Colors.green,
+              num: HomeData.messagePageUnreadNum,
+            ),
+            Navigation(
+              icon: Icons.message,
+              text: "消息",
+              color: Colors.black54,
+              num: HomeData.messagePageUnreadNum,
+            ),
           ),
           MyBottomNavigationBarItem(
-            Navigation(Icons.people, "好友", Colors.green),
-            Navigation(Icons.people, "好友", Colors.black54),
+            Navigation(
+              icon: Icons.people,
+              text: "好友",
+              color: Colors.green,
+              num: HomeData.friendPageUnreadNum,
+            ),
+            Navigation(
+              icon: Icons.people,
+              text: "好友",
+              color: Colors.black54,
+              num: HomeData.friendPageUnreadNum,
+            ),
           ),
           MyBottomNavigationBarItem(
-            Navigation(Icons.person_outline, "我的", Colors.green),
-            Navigation(Icons.person_outline, "我的", Colors.black54),
+            Navigation(
+                icon: Icons.person_outline, text: "我的", color: Colors.green),
+            Navigation(
+                icon: Icons.person_outline, text: "我的", color: Colors.black54),
           ),
         ],
         onTap: (index) {

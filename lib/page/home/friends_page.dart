@@ -8,6 +8,7 @@ import 'package:fim/page/chat/chat_page.dart';
 import 'package:fim/page/loading_page.dart';
 import 'package:fim/theme/color.dart';
 import 'package:fim/widget/list_item.dart';
+import 'package:fim/widget/red_dot.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fixnum/fixnum.dart';
@@ -57,6 +58,7 @@ class _FriendsPageState extends State<FriendsPage> {
           ListItem(
             icon: Image.asset("assets/friend.png"),
             name: "新的朋友",
+            num: 1,
             onTab: () {
               Navigator.push(
                 context,

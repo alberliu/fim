@@ -1,4 +1,5 @@
 import 'package:fim/theme/color.dart';
+import 'package:fim/widget/red_dot.dart';
 import 'package:flutter/material.dart';
 
 class MyBottomNavigationBar extends StatefulWidget {
@@ -35,7 +36,7 @@ class _MyBottomNavigationBarState extends State<MyBottomNavigationBar> {
 
     return Container(
       decoration: new BoxDecoration(
-        color:Colors.grey[300] ,
+        color: Colors.grey[300],
         //设置四周边框
         border: Border(
           top: BorderSide(
@@ -84,36 +85,40 @@ class Navigation extends StatelessWidget {
   IconData icon;
   String text;
   Color color;
+  int num;
 
-  Navigation(this.icon, this.text, this.color);
+  Navigation({this.icon, this.text, this.color, this.num = 0});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 50,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            icon,
-            size: 30,
-            color: color,
-          ),
-          Text(
-            text,
-            style: TextStyle(
+    return RedDot(
+      num: num,
+      child: Container(
+        width: 50,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              icon,
+              size: 30,
               color: color,
-              fontSize: 11.0,
-              height: 1,
             ),
-            strutStyle: StrutStyle(
-              forceStrutHeight: true,
-              fontSize: 11,
-              height: 1,
-              leading: 0.5,
+            Text(
+              text,
+              style: TextStyle(
+                color: color,
+                fontSize: 11.0,
+                height: 1,
+              ),
+              strutStyle: StrutStyle(
+                forceStrutHeight: true,
+                fontSize: 11,
+                height: 1,
+                leading: 0.5,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

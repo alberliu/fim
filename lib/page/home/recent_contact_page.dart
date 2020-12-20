@@ -1,9 +1,13 @@
 import 'dart:async';
+import 'package:flutter/foundation.dart';
+import 'package:provider/provider.dart';
 import 'package:fim/dao/recent_contact_dao.dart';
+import 'package:fim/data/recent_contacts.dart';
 import 'package:fim/data/stream.dart';
 import 'package:fim/model/recent_contact.dart';
 import 'package:fim/page/chat/chat_page.dart';
 import 'package:fim/theme/color.dart';
+import 'package:fim/widget/red_dot.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fixnum/fixnum.dart';
@@ -106,9 +110,9 @@ class _RecentContactPageState extends State<RecentContactPage> {
             thickness: 2,
           );
         },
-        itemCount: contacts.length,
+        itemCount: context.watch<RecentContacts>().contacts.length,
         itemBuilder: (BuildContext context, int index) {
-          var contact = contacts[index];
+          var contact = context.watch<RecentContacts>().contacts[index];
           return _ListItem(
             icon: contact.avatarUrl,
             name: contact.name,
@@ -170,38 +174,16 @@ class _ListItemState extends State<_ListItem> {
             Container(
               width: 60,
               height: 60,
-              child: Stack(
-                children: [
-                  Container(
-                    padding: EdgeInsets.all(10),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(7),
-                      child: Image.network(widget.icon),
-                    ),
+              padding: EdgeInsets.all(5),
+              child: RedDot(
+                num: widget.unread,
+                child: Container(
+                  padding: EdgeInsets.all(5),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(7),
+                    child: Image.network(widget.icon),
                   ),
-                  Positioned(
-                    top: 5,
-                    right: 5,
-                    child: widget.unread == 0
-                        ? Container()
-                        : ConstrainedBox(
-                            constraints:
-                                BoxConstraints(minWidth: 20, minHeight: 20),
-                            child: Container(
-                              padding: EdgeInsets.only(left: 5, right: 5),
-                              alignment: Alignment.center,
-                              decoration: BoxDecoration(
-                                color: Colors.red,
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: Text(
-                                widget.unread.toString(),
-                                style: TextStyle(color: Colors.white),
-                              ),
-                            ),
-                          ),
-                  )
-                ],
+                ),
               ),
             ),
             Expanded(
