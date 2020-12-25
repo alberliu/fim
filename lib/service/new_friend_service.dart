@@ -1,12 +1,16 @@
 import 'package:fim/dao/new_friend_dao.dart';
 import 'package:fim/model/new_friend.dart';
-import 'package:fim/service/new_friend_unread_service.dart';
 import 'package:flutter/cupertino.dart';
 
 var newFriendService = NewFriendService();
 
 class NewFriendService with ChangeNotifier {
+  int unreadNum = 0;
   List<NewFriend> list;
+
+  initUnread() async {
+    unreadNum = await NewFriendDao.getUnreadNum();
+  }
 
   initNewFriendList() async {
     list = await NewFriendDao.list();
@@ -14,17 +18,17 @@ class NewFriendService with ChangeNotifier {
 
   void add(NewFriend friend) {
     NewFriendDao.add(friend);
+    unreadNum++;
     if (list != null) {
       list.insert(0, friend);
-      notifyListeners();
     }
-    newFriendUnreadService.add();
+    notifyListeners();
   }
 
   void read() async {
     NewFriendDao.read();
-
-    newFriendUnreadService.set(0);
+    unreadNum = 0;
+    notifyListeners();
   }
 
   void updateStatus(int userId, int status) {

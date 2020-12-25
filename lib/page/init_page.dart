@@ -3,7 +3,7 @@ import 'package:fim/dao/message_dao.dart';
 import 'package:fim/dao/new_friend_dao.dart';
 import 'package:fim/dao/recent_contact_dao.dart';
 import 'package:fim/service/friend_service.dart';
-import 'package:fim/service/new_friend_unread_service.dart';
+import 'package:fim/service/new_friend_service.dart';
 import 'package:fim/service/preferences.dart';
 import 'package:fim/service/recent_contact_service.dart';
 import 'package:fim/notification/notification.dart';
@@ -84,7 +84,7 @@ class InitPage extends StatelessWidget {
     await friendService.init();
 
     // 初始化新好友好友
-    await newFriendUnreadService.init();
+    await newFriendService.initUnread();
 
     // 长连接登录
     await SocketManager().connect("112.126.102.84", 8080);

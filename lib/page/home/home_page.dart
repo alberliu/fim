@@ -1,5 +1,4 @@
 import 'package:fim/service/new_friend_service.dart';
-import 'package:fim/service/new_friend_unread_service.dart';
 import 'package:fim/service/recent_contact_service.dart';
 import 'package:fim/page/group/create_group_page.dart';
 import 'package:fim/page/home/friends_page.dart';
@@ -74,13 +73,13 @@ class _HomePageState extends State<HomePage> {
               icon: Icons.people,
               text: "好友",
               color: Colors.green,
-              num: context.watch<NewFriendUnreadService>().unreadNum,
+              num: context.watch<NewFriendService>().unreadNum,
             ),
             Navigation(
               icon: Icons.people,
               text: "好友",
               color: Colors.black54,
-              num: context.watch<NewFriendUnreadService>().unreadNum,
+              num: context.watch<NewFriendService>().unreadNum,
             ),
           ),
           MyBottomNavigationBarItem(

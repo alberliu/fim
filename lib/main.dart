@@ -2,7 +2,6 @@ import 'dart:io';
 import 'package:fim/service/chat_service.dart';
 import 'package:fim/service/friend_service.dart';
 import 'package:fim/service/new_friend_service.dart';
-import 'package:fim/service/new_friend_unread_service.dart';
 import 'package:fim/service/recent_contact_service.dart';
 import 'package:fim/page/chat/chat_page.dart';
 import 'package:fim/page/init_page.dart';
@@ -24,7 +23,6 @@ void main() {
         ChangeNotifierProvider(create: (_) => recentContactService),
         ChangeNotifierProvider(create: (_) => friendService),
         ChangeNotifierProvider(create: (_) => newFriendService),
-        ChangeNotifierProvider(create: (_) => newFriendUnreadService),
         ChangeNotifierProvider(create: (_) => chatService),
       ],
       child: App(),

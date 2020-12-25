@@ -2,7 +2,7 @@ import 'package:fim/service/friend_service.dart';
 import 'package:fim/model/message.dart';
 import 'package:fim/page/group/groups_page.dart';
 import 'package:fim/page/chat/chat_page.dart';
-import 'package:fim/service/new_friend_unread_service.dart';
+import 'package:fim/service/new_friend_service.dart';
 import 'package:fim/theme/color.dart';
 import 'package:fim/widget/list_item.dart';
 import 'package:flutter/cupertino.dart';
@@ -35,7 +35,7 @@ class _FriendsPageState extends State<FriendsPage> {
           ListItem(
             icon: Image.asset("assets/friend.png"),
             name: "新的朋友",
-            num: context.watch<NewFriendUnreadService>().unreadNum,
+            num: context.watch<NewFriendService>().unreadNum,
             onTab: () {
               Navigator.push(
                 context,
