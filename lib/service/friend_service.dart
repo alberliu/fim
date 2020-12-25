@@ -1,13 +1,16 @@
-import 'package:fim/data/preferences.dart';
+import 'package:fim/service/preferences.dart';
 import 'package:fim/net/api.dart';
 import 'package:fim/pb/logic.ext.pb.dart';
 import 'package:fixnum/fixnum.dart';
+import 'package:flutter/cupertino.dart';
 
-class Friends {
-  static List<Friend> friendList;
-  static Map<Int64, Friend> friendMap;
+var friendService = FriendService();
 
-  static init() async {
+class FriendService with ChangeNotifier {
+  List<Friend> friendList;
+  Map<Int64, Friend> friendMap;
+
+  init() async {
     var response =
         await logicClient.getFriends(GetFriendsReq(), options: getOptions());
 
@@ -19,7 +22,11 @@ class Friends {
     }
   }
 
-  static Friend get(Int64 friendId) {
+  Friend get(Int64 friendId) {
     return friendMap[friendId];
+  }
+
+  void changed() {
+    notifyListeners();
   }
 }

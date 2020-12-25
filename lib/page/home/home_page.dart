@@ -1,4 +1,6 @@
-import 'package:fim/data/home_data.dart';
+import 'package:fim/service/new_friend_service.dart';
+import 'package:fim/service/new_friend_unread_service.dart';
+import 'package:fim/service/recent_contact_service.dart';
 import 'package:fim/page/group/create_group_page.dart';
 import 'package:fim/page/home/friends_page.dart';
 import 'package:fim/page/home/my_page.dart';
@@ -8,6 +10,7 @@ import 'package:fim/theme/color.dart';
 import 'package:fim/theme/size.dart';
 import 'package:fim/widget/my_bottom_navigation_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key key}) : super(key: key);
@@ -57,13 +60,13 @@ class _HomePageState extends State<HomePage> {
               icon: Icons.message,
               text: "消息",
               color: Colors.green,
-              num: HomeData.messagePageUnreadNum,
+              num: context.watch<RecentContactService>().unReadNum,
             ),
             Navigation(
               icon: Icons.message,
               text: "消息",
               color: Colors.black54,
-              num: HomeData.messagePageUnreadNum,
+              num: context.watch<RecentContactService>().unReadNum,
             ),
           ),
           MyBottomNavigationBarItem(
@@ -71,13 +74,13 @@ class _HomePageState extends State<HomePage> {
               icon: Icons.people,
               text: "好友",
               color: Colors.green,
-              num: HomeData.friendPageUnreadNum,
+              num: context.watch<NewFriendUnreadService>().unreadNum,
             ),
             Navigation(
               icon: Icons.people,
               text: "好友",
               color: Colors.black54,
-              num: HomeData.friendPageUnreadNum,
+              num: context.watch<NewFriendUnreadService>().unreadNum,
             ),
           ),
           MyBottomNavigationBarItem(

@@ -1,7 +1,6 @@
-import 'package:fim/dao/recent_contact_dao.dart';
-import 'package:fim/data/friends.dart';
-import 'package:fim/data/preferences.dart';
-import 'package:fim/data/stream.dart';
+import 'package:fim/service/friend_service.dart';
+import 'package:fim/service/preferences.dart';
+import 'package:fim/service/recent_contact_service.dart';
 import 'package:fim/model/message.dart';
 import 'package:fim/net/api.dart';
 import 'package:fim/pb/logic.ext.pb.dart';
@@ -20,7 +19,7 @@ class FriendPage extends StatefulWidget {
   String changeName;
 
   FriendPage({Key key, Int64 friendId}) : super(key: key) {
-    friend = Friends.get(friendId);
+    friend = friendService.get(friendId);
   }
 
   @override
@@ -155,7 +154,7 @@ class _FriendPageState extends State<FriendPage> {
 
     await logicClient.setFriend(req, options: getOptions());
     widget.friend.remarks = editingController.text;
-    friendsChangeController.add(1);
+    friendService.changed();
 
     String name;
     if (editingController.text != "") {
@@ -163,9 +162,9 @@ class _FriendPageState extends State<FriendPage> {
     } else {
       name = widget.friend.nickname;
     }
-    await RecentContactDao.updateInfo(Message.objectTypeUser,
+
+    recentContactService.updateInfo(Message.objectTypeUser,
         widget.friend.userId.toInt(), name, widget.friend.avatarUrl);
-    friendsChangeController.add(1);
     widget.changeName = name;
     toast("修改成功");
   }

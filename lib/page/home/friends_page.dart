@@ -1,18 +1,15 @@
-import 'dart:async';
-import 'package:fim/data/friends.dart';
-import 'package:fim/data/stream.dart';
+import 'package:fim/service/friend_service.dart';
 import 'package:fim/model/message.dart';
 import 'package:fim/page/group/groups_page.dart';
-import 'package:fim/pb/logic.ext.pb.dart';
 import 'package:fim/page/chat/chat_page.dart';
-import 'package:fim/page/loading_page.dart';
+import 'package:fim/service/new_friend_unread_service.dart';
 import 'package:fim/theme/color.dart';
 import 'package:fim/widget/list_item.dart';
-import 'package:fim/widget/red_dot.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fixnum/fixnum.dart';
 import '../friend/new_friend_page.dart';
+import 'package:provider/provider.dart';
 
 class FriendsPage extends StatefulWidget {
   @override
@@ -23,42 +20,22 @@ class FriendsPage extends StatefulWidget {
 }
 
 class _FriendsPageState extends State<FriendsPage> {
-  bool loading = true;
-  List<Friend> friends = [];
-  StreamSubscription friendsChangeSubscription;
-
   @override
   void initState() {
     super.initState();
     print("friend_page initState");
-    loadData();
-
-    friendsChangeSubscription = friendsChangeStream.listen(
-      (event) {
-        setState(() {});
-      },
-    );
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    friendsChangeSubscription.cancel();
   }
 
   @override
   Widget build(BuildContext context) {
     print("friend_page build");
-    if (loading) {
-      return LoadingPage();
-    }
     return Container(
       child: Column(
         children: [
           ListItem(
             icon: Image.asset("assets/friend.png"),
             name: "新的朋友",
-            num: 1,
+            num: context.watch<NewFriendUnreadService>().unreadNum,
             onTab: () {
               Navigator.push(
                 context,
@@ -99,38 +76,32 @@ class _FriendsPageState extends State<FriendsPage> {
                 );
               },
               addAutomaticKeepAlives: true,
-              itemCount: friends.length,
-              itemBuilder: (BuildContext context, int index) => ListItem(
-                icon: Image.network(friends[index].avatarUrl),
-                name: friends[index].remarks != ""
-                    ? friends[index].remarks
-                    : friends[index].nickname,
-                onTab: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ChatPage(
-                        objectType: Int64(Message.objectTypeUser),
-                        objectId: friends[index].userId,
-                        name: friends[index].remarks != ""
-                            ? friends[index].remarks
-                            : friends[index].nickname,
+              itemCount: context.watch<FriendService>().friendList.length,
+              itemBuilder: (BuildContext context, int index) {
+                var friend = context.watch<FriendService>().friendList[index];
+                return ListItem(
+                  icon: Image.network(friend.avatarUrl),
+                  name: friend.remarks != "" ? friend.remarks : friend.nickname,
+                  onTab: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ChatPage(
+                          objectType: Int64(Message.objectTypeUser),
+                          objectId: friend.userId,
+                          name: friend.remarks != ""
+                              ? friend.remarks
+                              : friend.nickname,
+                        ),
                       ),
-                    ),
-                  );
-                },
-              ),
+                    );
+                  },
+                );
+              },
             ),
           ),
         ],
       ),
     );
-  }
-
-  void loadData() {
-    friends = Friends.friendList;
-    setState(() {
-      loading = false;
-    });
   }
 }

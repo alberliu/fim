@@ -1,9 +1,6 @@
-import 'dart:async';
+import 'package:fim/service/recent_contact_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:provider/provider.dart';
-import 'package:fim/dao/recent_contact_dao.dart';
-import 'package:fim/data/recent_contacts.dart';
-import 'package:fim/data/stream.dart';
 import 'package:fim/model/recent_contact.dart';
 import 'package:fim/page/chat/chat_page.dart';
 import 'package:fim/theme/color.dart';
@@ -18,85 +15,6 @@ class RecentContactPage extends StatefulWidget {
 }
 
 class _RecentContactPageState extends State<RecentContactPage> {
-  List<RecentContact> contacts = List();
-  StreamSubscription contactSubscription;
-  StreamSubscription readSubscription;
-  StreamSubscription friendsChangeSubscription;
-
-  @override
-  void initState() {
-    super.initState();
-    initData();
-  }
-
-  initData() async {
-    // 从本地数据库读取
-    var list = await RecentContactDao.list();
-    contacts.addAll(list);
-    setState(() {});
-
-    // 监听网络事件
-    contactSubscription = contactStream.listen(
-      (event) {
-        print("contact_event_in:$event");
-        bool has = false;
-        for (var contact in contacts) {
-          if (contact.objectType == event.objectType &&
-              contact.objectId == event.objectId) {
-            print("contact_event_update");
-            contact.name = event.name;
-            contact.avatarUrl = event.avatarUrl;
-            contact.lastTime = event.lastTime;
-            contact.lastMessage = event.lastMessage;
-            contact.unread = contact.unread + event.unread;
-            contacts.sort((left, right) => right.lastTime - left.lastTime);
-            has = true;
-            break;
-          }
-        }
-        if (!has) {
-          print("contact_event_insert");
-          contacts.insert(0, event);
-        }
-        setState(() {});
-      },
-    );
-
-    // 监听消息已读事件
-    readSubscription = readStream.listen(
-      (event) {
-        print("read_event:$event");
-        bool has = false;
-        for (var contact in contacts) {
-          if (contact.objectType == event.objectType &&
-              contact.objectId == event.objectId) {
-            setState(() {
-              contact.unread = 0;
-            });
-            break;
-          }
-        }
-      },
-    );
-
-    // 监听联系人信息变更事件
-    friendsChangeSubscription = friendsChangeStream.listen(
-      (event) async {
-        print("friendsChange event");
-        contacts = await RecentContactDao.list();
-        setState(() {});
-      },
-    );
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    contactSubscription.cancel();
-    readSubscription.cancel();
-    friendsChangeSubscription.cancel();
-  }
-
   @override
   Widget build(BuildContext context) {
     print("RecentContactPage build");
@@ -110,9 +28,9 @@ class _RecentContactPageState extends State<RecentContactPage> {
             thickness: 2,
           );
         },
-        itemCount: context.watch<RecentContacts>().contacts.length,
+        itemCount: context.watch<RecentContactService>().contacts.length,
         itemBuilder: (BuildContext context, int index) {
-          var contact = context.watch<RecentContacts>().contacts[index];
+          var contact = context.watch<RecentContactService>().contacts[index];
           return _ListItem(
             icon: contact.avatarUrl,
             name: contact.name,

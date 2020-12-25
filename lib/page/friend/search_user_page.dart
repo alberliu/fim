@@ -1,7 +1,7 @@
-import 'package:fim/data/preferences.dart';
+import 'package:fim/pb/business.ext.pb.dart';
+import 'package:fim/service/preferences.dart';
 import 'package:fim/net/api.dart';
 import 'package:fim/page/friend/add_friend_page.dart';
-import 'package:fim/pb/user.ext.pb.dart';
 import 'package:fim/theme/color.dart';
 import 'package:fim/theme/size.dart';
 import 'package:flutter/cupertino.dart';
@@ -45,7 +45,7 @@ class _SearchUserPageState extends State<SearchUserPage> {
                 var request = SearchUserReq();
                 request.key = text;
                 var response =
-                    await userClient.searchUser(request, options: getOptions());
+                    await businessClient.searchUser(request, options: getOptions());
                 setState(() {
                   users = response.users;
                 });

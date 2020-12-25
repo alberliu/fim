@@ -1,8 +1,7 @@
-import 'package:fim/dao/recent_contact_dao.dart';
-import 'package:fim/data/friends.dart';
-import 'package:fim/data/groups.dart';
-import 'package:fim/data/preferences.dart';
-import 'package:fim/data/stream.dart';
+import 'package:fim/service/friend_service.dart';
+import 'package:fim/service/groups.dart';
+import 'package:fim/service/preferences.dart';
+import 'package:fim/service/recent_contact_service.dart';
 import 'package:fim/model/message.dart';
 import 'package:fim/model/recent_contact.dart';
 import 'package:fim/net/api.dart';
@@ -26,7 +25,7 @@ class _CreateGroupPageState extends State<CreateGroupPage> {
   void initState() {
     super.initState();
 
-    for (var user in Friends.friendList) {
+    for (var user in friendService.friendList) {
       users.add(CheckUser(user, false));
     }
     print("users:${users.length}");
@@ -148,8 +147,7 @@ class _CreateGroupPageState extends State<CreateGroupPage> {
     contact.lastMessage = groupName;
     contact.lastTime = Int64(DateTime.now().millisecondsSinceEpoch).toInt();
     contact.unread = 0;
-    RecentContactDao.add(contact);
-    contactController.add(contact);
+    recentContactService.onMessage(contact);
 
     // 进入到聊天页面
     Navigator.pushReplacement(

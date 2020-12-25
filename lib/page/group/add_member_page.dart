@@ -1,5 +1,5 @@
-import 'package:fim/data/friends.dart';
-import 'package:fim/data/preferences.dart';
+import 'package:fim/service/friend_service.dart';
+import 'package:fim/service/preferences.dart';
 import 'package:fim/net/api.dart';
 import 'package:fim/pb/logic.ext.pb.dart';
 import 'package:fim/theme/color.dart';
@@ -26,7 +26,7 @@ class _AddMemberState extends State<AddMemberPage> {
   void initState() {
     super.initState();
 
-    for (var user in Friends.friendList) {
+    for (var user in friendService.friendList) {
       if (!isInGroup(user.userId)) {
         users.add(CheckUser(user, false));
       }

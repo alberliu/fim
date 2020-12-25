@@ -3,7 +3,7 @@ import 'package:fim/page/sign_in_page.dart';
 import 'package:fim/theme/color.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:fim/data/preferences.dart';
+import 'package:fim/service/preferences.dart';
 
 class MyPage extends StatefulWidget {
   @override

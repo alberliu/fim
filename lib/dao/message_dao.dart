@@ -1,4 +1,4 @@
-import 'package:fim/data/preferences.dart';
+import 'package:fim/service/preferences.dart';
 import 'package:fim/model/message.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';

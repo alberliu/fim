@@ -1,4 +1,4 @@
-import 'package:fim/data/preferences.dart';
+import 'package:fim/service/preferences.dart';
 import 'package:fim/model/recent_contact.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
@@ -41,11 +41,13 @@ class RecentContactDao {
   }
 
   static Future<void> add(RecentContact contact) async {
+    var copy = RecentContact.copy(contact);
+
     var contactFromDB = await _get(contact.objectType, contact.objectId);
     if (contactFromDB != null) {
-      contact.unread = contactFromDB.unread + contact.unread;
+      copy.unread = contactFromDB.unread + copy.unread;
     }
-    await _update(contact);
+    await _update(copy);
   }
 
   static Future<RecentContact> _get(int objectType, int objectId) async {

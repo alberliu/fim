@@ -2,14 +2,14 @@ import 'dart:async';
 import 'dart:ffi';
 import 'dart:io';
 import 'dart:typed_data';
-import 'package:fim/dao/message_dao.dart';
-import 'package:fim/dao/new_friend_dao.dart';
 import 'package:fim/dao/recent_contact_dao.dart';
-import 'package:fim/data/friends.dart';
-import 'package:fim/data/groups.dart';
-import 'package:fim/data/open_object.dart';
-import 'package:fim/data/preferences.dart';
-import 'package:fim/data/stream.dart';
+import 'package:fim/service/chat_service.dart';
+import 'package:fim/service/friend_service.dart';
+import 'package:fim/service/groups.dart';
+import 'package:fim/service/new_friend_service.dart';
+import 'package:fim/service/open_object.dart';
+import 'package:fim/service/preferences.dart';
+import 'package:fim/service/recent_contact_service.dart';
 import 'package:fim/model/new_friend.dart';
 import 'package:fim/model/recent_contact.dart';
 import 'package:fim/notification/notification.dart';
@@ -169,15 +169,11 @@ class SocketManager {
 
     // 好友消息
     if (message.objectType == model.Message.objectTypeUser) {
-      // 保存到消息库
-      await MessageDao.add(message);
-      // 广播消息
-      messageController.add(message);
+      // 处理消息逻辑
+      chatService.onMessage(message);
       // 保存到最近联系人
       var contact = await RecentContact.build(message);
-      await RecentContactDao.add(contact);
-      contactController.add(contact);
-
+      recentContactService.onMessage(contact);
       if (!OpenedObject.isOpened(contact.objectType, contact.objectId)) {
         showNotifications(contact.name, contact.lastMessage);
       }
@@ -186,14 +182,11 @@ class SocketManager {
 
     // 群组消息
     if (message.objectType == model.Message.objectTypeGroup) {
-      // 保存到消息库
-      await MessageDao.add(message);
-      // 广播消息
-      messageController.add(message);
+      // 处理消息逻辑
+      chatService.onMessage(message);
       // 保存到最近联系人
       var contact = await RecentContact.build(message);
-      await RecentContactDao.add(contact);
-      contactController.add(contact);
+      recentContactService.onMessage(contact);
 
       if (!OpenedObject.isOpened(contact.objectType, contact.objectId)) {
         showNotifications(contact.name, contact.lastMessage);
@@ -215,7 +208,7 @@ class SocketManager {
             updateGroupPush.avatarUrl,
           );
 
-          friendsChangeController.add(1);
+          friendService.changed();
 
           var group = await Groups.get(Int64(message.objectId));
           group.name = updateGroupPush.name;
@@ -240,16 +233,13 @@ class SocketManager {
           time: message.sendTime,
           status: NewFriend.unread,
         );
-        // 写进新好友库
-        NewFriendDao.add(newFriend);
-        // 广播消息
-        newFriendController.add(newFriend);
+        newFriendService.add(newFriend);
         return;
       }
       // 同意添加好友
       if (message.objectId == PushCode.PC_AGREE_ADD_FRIEND.value) {
         // 重新加载好友列表
-        await Friends.init();
+        await friendService.init();
         var contact = RecentContact();
         contact.objectType = model.Message.objectTypeUser;
         var agreeAddFriendPush = AgreeAddFriendPush.fromBuffer(command.data);
@@ -260,8 +250,7 @@ class SocketManager {
         contact.lastMessage = "成功添加好友";
         contact.lastTime = Int64(DateTime.now().millisecondsSinceEpoch).toInt();
         contact.unread = 0;
-        RecentContactDao.add(contact);
-        contactController.add(contact);
+        recentContactService.onMessage(contact);
         return;
       }
     }

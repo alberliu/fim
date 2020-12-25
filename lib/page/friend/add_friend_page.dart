@@ -1,7 +1,7 @@
-import 'package:fim/data/preferences.dart';
+import 'package:fim/pb/business.ext.pb.dart';
+import 'package:fim/service/preferences.dart';
 import 'package:fim/net/api.dart';
 import 'package:fim/pb/logic.ext.pb.dart';
-import 'package:fim/pb/user.ext.pb.dart';
 import 'package:fim/theme/color.dart';
 import 'package:fim/theme/size.dart';
 import 'package:fim/util/toast.dart';

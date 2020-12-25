@@ -1,4 +1,4 @@
-import 'package:fim/data/preferences.dart';
+import 'package:fim/service/preferences.dart';
 import 'package:fim/net/api.dart';
 import 'package:fim/pb/logic.ext.pb.dart';
 import 'package:fixnum/fixnum.dart';

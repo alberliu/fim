@@ -1,10 +1,8 @@
 import 'dart:async';
 import 'dart:ffi';
-import 'package:fim/dao/message_dao.dart';
-import 'package:fim/dao/recent_contact_dao.dart';
-import 'package:fim/data/open_object.dart';
-import 'package:fim/data/preferences.dart';
-import 'package:fim/data/stream.dart';
+import 'package:fim/service/chat_service.dart';
+import 'package:fim/service/preferences.dart';
+import 'package:fim/service/recent_contact_service.dart';
 import 'package:fim/model/message.dart' as model;
 import 'package:fim/model/recent_contact.dart';
 import 'package:fim/page/friend/friend_page.dart';
@@ -12,12 +10,12 @@ import 'package:fim/page/group/group_info_page.dart';
 import 'package:fim/pb/conn.ext.pb.dart' as pb;
 import 'package:fim/pb/logic.ext.pb.dart';
 import 'package:fim/net/api.dart';
-import 'package:fim/pb/push.ext.pb.dart';
 import 'package:fim/theme/color.dart';
 import 'package:fim/theme/size.dart';
 import 'package:fixnum/fixnum.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:provider/provider.dart';
 
 class ChatPage extends StatefulWidget {
   Int64 objectType;
@@ -34,127 +32,100 @@ class ChatPage extends StatefulWidget {
 class _ChatPageState extends State<ChatPage> {
   ScrollController _scrollController = ScrollController();
   TextEditingController _editingController = TextEditingController();
-  List<model.Message> messages = List();
-
-  StreamSubscription subscription;
+  Future future;
 
   @override
   void initState() {
     super.initState();
     print("chatBody initState");
 
-    OpenedObject.open(widget.objectType, widget.objectId);
+    future = chatService.init(
+        widget.objectType.toInt(), widget.objectId.toInt(), widget.name);
 
     initData();
     readMessage();
   }
 
   void initData() async {
-    print("object,type:${widget.objectType},id:${widget.objectId}");
-    // 初始化消息列表
-    var list = await MessageDao.list(widget.objectType.toInt(),
-        widget.objectId.toInt(), Int64.MAX_VALUE.toInt(), 20);
-    setState(() {
-      messages.addAll(list);
-    });
-
-    subscription = messageStream.listen((event) {
-      if (event.objectType != widget.objectType.toInt()) return;
-      if (event.objectId != widget.objectId.toInt()) return;
-
-      if (event.messageType == pb.MessageType.MT_TEXT.value) {
-        setState(() {
-          messages.insert(0, event);
-        });
-      }
-
-      // 指令消息
-      if (event.messageType == pb.MessageType.MT_COMMAND.value) {
-        var command = pb.Command.fromBuffer(event.messageContent);
-        print("指令消息：${command.code}");
-        // 群组信息更新
-        if (command.code == PushCode.PC_UPDATE_GROUP.value) {
-          var updateGroupPush = UpdateGroupPush.fromBuffer(command.data);
-          widget.name = updateGroupPush.name;
-          messages.insert(0, event);
-          setState(() {});
-        }
-        if (command.code == PushCode.PC_ADD_GROUP_MEMBERS.value) {
-          messages.insert(0, event);
-          setState(() {});
-        }
-      }
-    });
-
     _scrollController.addListener(loadMore);
   }
 
   readMessage() {
-    RecentContactDao.updateRead(
+    recentContactService.readMessage(
         widget.objectType.toInt(), widget.objectId.toInt());
-    var contact = RecentContact();
-    contact.objectType = widget.objectType.toInt();
-    contact.objectId = widget.objectId.toInt();
-    readController.add(contact);
   }
 
   @override
   void dispose() {
     super.dispose();
-
-    OpenedObject.close();
-
-    if (subscription != null) {
-      subscription.cancel();
-    }
+    chatService.destroy(widget.objectType.toInt(), widget.objectId.toInt());
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        toolbarHeight: appBarHeight,
-        title: Text(widget.name),
-        centerTitle: true,
-        actions: <Widget>[
-          // 非隐藏的菜单
-          new IconButton(
-            icon: new Icon(Icons.more_horiz),
-            tooltip: 'Add Alarm',
-            onPressed: () async {
-              String changeName;
-              if (widget.objectType == model.Message.objectTypeUser) {
-                changeName = await Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => FriendPage(friendId: widget.objectId),
-                  ),
-                );
-              }
+    return FutureBuilder(
+      future: future,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          return Scaffold(
+            appBar: AppBar(
+              toolbarHeight: appBarHeight,
+              title: Text(context
+                  .watch<ChatService>()
+                  .getChatData(
+                      widget.objectType.toInt(), widget.objectId.toInt())
+                  .name),
+              centerTitle: true,
+              actions: <Widget>[
+                // 非隐藏的菜单
+                new IconButton(
+                  icon: new Icon(Icons.more_horiz),
+                  tooltip: 'Add Alarm',
+                  onPressed: () async {
+                    String changeName;
+                    if (widget.objectType == model.Message.objectTypeUser) {
+                      changeName = await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              FriendPage(friendId: widget.objectId),
+                        ),
+                      );
+                    }
 
-              if (widget.objectType == model.Message.objectTypeGroup) {
-                changeName = await Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => GroupInfoPage(
-                        groupId: widget.objectId, name: widget.name),
-                  ),
-                );
-              }
-              if (changeName != null) {
-                widget.name = changeName;
-                setState(() {});
-              }
-            },
+                    if (widget.objectType == model.Message.objectTypeGroup) {
+                      changeName = await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => GroupInfoPage(
+                              groupId: widget.objectId, name: widget.name),
+                        ),
+                      );
+                    }
+                    if (changeName != null) {
+                      widget.name = changeName;
+                      setState(() {});
+                    }
+                  },
+                ),
+              ],
+              brightness: appBarBrightness,
+            ),
+            body: buildBody(context),
+          );
+        }
+        return Scaffold(
+          appBar: AppBar(
+            toolbarHeight: appBarHeight,
+            title: Text(widget.name),
+            centerTitle: true,
+            brightness: appBarBrightness,
           ),
-        ],
-        brightness: appBarBrightness,
-      ),
-      body: buildBody(context),
+        );
+      },
     );
   }
 
-  @override
   Widget buildBody(BuildContext context) {
     print("chat_page build");
     return Container(
@@ -162,84 +133,36 @@ class _ChatPageState extends State<ChatPage> {
         children: <Widget>[
           Expanded(
             // 消息界面
-            child: Container(
-              color: Colors.grey[200],
-              child: Scrollbar(
-                child: ListView.builder(
-                  itemCount: messages.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return messageWidget(index);
-                  },
-                  reverse: true,
-                  controller: _scrollController,
-                ),
-              ),
-            ),
+            child: buildMessageListWidget(context),
           ),
           // 消息发送区域
-          Container(
-            color: Color(0xFFD6D6D6),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: <Widget>[
-                Expanded(
-                  child: Container(
-                    padding: EdgeInsets.only(
-                        top: 10, bottom: 10, left: 10, right: 0),
-                    decoration: new BoxDecoration(
-                      borderRadius: new BorderRadius.circular((10.0)), // 圆角度
-                    ),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(5),
-                      child: TextField(
-                        cursorWidth: 1,
-                        maxLines: 4,
-                        minLines: 1,
-                        style: TextStyle(
-                          fontSize: 16,
-                          height: 1,
-                        ),
-                        strutStyle: StrutStyle(
-                          forceStrutHeight: true,
-                          fontSize: 16,
-                          height: 1,
-                          leading: 0.5,
-                        ),
-                        decoration: InputDecoration(
-                          hintMaxLines: 1,
-                          helperMaxLines: 1,
-                          filled: true,
-                          fillColor: Colors.grey[200],
-                          border: InputBorder.none,
-                          isDense: true,
-                        ),
-                        controller: _editingController,
-                      ),
-                    ),
-                  ),
-                ),
-                Container(
-                  //width: 70,
-                  height: 60,
-                  //color: Colors.red,
-                  alignment: Alignment.center,
-                  child: IconButton(
-                    //alignment: Alignment.bottomCenter,
-                    color: Colors.green,
-                    icon: Icon(Icons.send),
-                    onPressed: sendMessage,
-                  ),
-                ),
-              ],
-            ),
-          ),
+          buildSendMessageWidget(),
         ],
       ),
     );
   }
 
-  Widget messageWidget(int index) {
-    var message = messages[index];
+  Widget buildMessageListWidget(BuildContext context) {
+    var messages = context
+        .watch<ChatService>()
+        .getChatData(widget.objectType.toInt(), widget.objectId.toInt())
+        .messages;
+    return Container(
+      color: Colors.grey[200],
+      child: Scrollbar(
+        child: ListView.builder(
+          itemCount: messages.length,
+          itemBuilder: (BuildContext context, int index) {
+            return buildMessageWidget(messages[index]);
+          },
+          reverse: true,
+          controller: _scrollController,
+        ),
+      ),
+    );
+  }
+
+  Widget buildMessageWidget(model.Message message) {
     if (message.messageType == pb.MessageType.MT_COMMAND.value) {
       String text = message.getCommandText();
       if (text != "") {
@@ -339,17 +262,71 @@ class _ChatPageState extends State<ChatPage> {
     );
   }
 
+  Widget buildSendMessageWidget() {
+    return Container(
+      color: Color(0xFFD6D6D6),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: <Widget>[
+          Expanded(
+            child: Container(
+              padding: EdgeInsets.only(top: 10, bottom: 10, left: 10, right: 0),
+              decoration: new BoxDecoration(
+                borderRadius: new BorderRadius.circular((10.0)), // 圆角度
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(5),
+                child: TextField(
+                  cursorWidth: 1,
+                  maxLines: 4,
+                  minLines: 1,
+                  style: TextStyle(
+                    fontSize: 16,
+                    height: 1,
+                  ),
+                  strutStyle: StrutStyle(
+                    forceStrutHeight: true,
+                    fontSize: 16,
+                    height: 1,
+                    leading: 0.5,
+                  ),
+                  decoration: InputDecoration(
+                    hintMaxLines: 1,
+                    helperMaxLines: 1,
+                    filled: true,
+                    fillColor: Colors.grey[200],
+                    border: InputBorder.none,
+                    isDense: true,
+                  ),
+                  controller: _editingController,
+                ),
+              ),
+            ),
+          ),
+          Container(
+            //width: 70,
+            height: 60,
+            //color: Colors.red,
+            alignment: Alignment.center,
+            child: IconButton(
+              //alignment: Alignment.bottomCenter,
+              color: Colors.green,
+              icon: Icon(Icons.send),
+              onPressed: sendMessage,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   void loadMore() async {
     if (_scrollController.position.pixels ==
         _scrollController.position.maxScrollExtent) {
       //如果不是最后一页数据，则生成新的数据添加到list里面
       print("loadMore");
 
-      var moreMessage = await MessageDao.list(widget.objectType.toInt(),
-          widget.objectId.toInt(), messages.last.seq, 20);
-
-      messages.addAll(moreMessage);
-      setState(() {});
+      chatService.loadMore(widget.objectType.toInt(), widget.objectId.toInt());
     }
   }
 
@@ -390,14 +367,12 @@ class _ChatPageState extends State<ChatPage> {
     message.seq = response.seq.toInt();
     message.sendTime = now.toInt();
 
-    MessageDao.add(message);
+    chatService.onMessage(message);
 
     var contact = await RecentContact.build(message);
     contact.unread = 0;
-    RecentContactDao.add(contact);
-    contactController.add(contact);
+    recentContactService.onMessage(contact);
 
-    messages.insert(0, message);
     setState(() {
       _editingController.text = "";
     });

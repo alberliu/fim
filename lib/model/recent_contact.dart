@@ -1,7 +1,7 @@
 import 'dart:typed_data';
-import 'package:fim/data/friends.dart';
-import 'package:fim/data/groups.dart';
-import 'package:fim/data/open_object.dart';
+import 'package:fim/service/friend_service.dart';
+import 'package:fim/service/groups.dart';
+import 'package:fim/service/open_object.dart';
 import 'package:fim/model/message.dart' as model;
 import 'package:fim/pb/conn.ext.pb.dart';
 import 'package:intl/intl.dart';
@@ -18,6 +18,16 @@ class RecentContact {
 
   RecentContact();
 
+  RecentContact.copy(RecentContact contact) {
+    objectType = contact.objectType;
+    objectId = contact.objectId;
+    name = contact.name;
+    avatarUrl = contact.avatarUrl;
+    lastTime = contact.lastTime;
+    lastMessage = contact.lastMessage;
+    unread = contact.unread;
+  }
+
   static Future<RecentContact> build(model.Message message) async {
     var contact = RecentContact();
 
@@ -26,17 +36,20 @@ class RecentContact {
     contact.lastTime = message.sendTime;
     contact.lastMessage = getLastMessage(message);
 
+    // 判断聊天窗口是否打开
     if (OpenedObject.isOpened(contact.objectType, contact.objectId)) {
       contact.unread = 0;
     } else {
       contact.unread = 1;
     }
 
+    // 判断是否是用户消息
     if (message.objectType == model.Message.objectTypeUser) {
-      var friend = Friends.get(Int64(message.objectId));
+      var friend = friendService.get(Int64(message.objectId));
       contact.name = friend.remarks != "" ? friend.remarks : friend.nickname;
       contact.avatarUrl = friend.avatarUrl;
     }
+    // 判断是否是群组消息
     if (message.objectType == model.Message.objectTypeGroup) {
       var group = await Groups.get(Int64(message.objectId));
       contact.name = group.name;

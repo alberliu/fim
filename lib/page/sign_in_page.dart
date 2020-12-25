@@ -1,8 +1,8 @@
 import 'dart:ffi';
-import 'package:fim/data/preferences.dart';
+import 'package:fim/pb/business.ext.pb.dart';
+import 'package:fim/service/preferences.dart';
 import 'package:fim/page/init_page.dart';
 import 'package:fim/page/set_user_page.dart';
-import 'package:fim/pb/user.ext.pb.dart';
 import 'package:fim/net/api.dart';
 import 'package:fim/theme/color.dart';
 import 'package:fim/theme/size.dart';
@@ -12,10 +12,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:grpc/grpc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'home/home_page.dart';
 
 class SignInPage extends StatelessWidget {
   TextEditingController _numberController = TextEditingController();
@@ -125,9 +123,10 @@ class SignInPage extends StatelessWidget {
 
     SignInResp signInResp;
     try {
-      signInResp = await userClient.signIn(request);
+      signInResp = await businessClient.signIn(request);
       print(signInResp.toString());
     } catch (e) {
+      print(e);
       toast("登录失败");
       return;
     }
@@ -137,7 +136,7 @@ class SignInPage extends StatelessWidget {
     await sharedPreferences.setString(phoneNumberKey, number);
 
     var getUserResp =
-        await userClient.getUser(GetUserReq(), options: getOptions());
+        await businessClient.getUser(GetUserReq(), options: getOptions());
     await sharedPreferences.setString(nicknameKey, getUserResp.user.nickname);
     await sharedPreferences.setString(avatarUrlKey, getUserResp.user.avatarUrl);
 

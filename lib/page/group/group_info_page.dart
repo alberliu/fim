@@ -1,10 +1,7 @@
 import 'dart:io';
 import 'package:dio/dio.dart';
-import 'package:fim/dao/recent_contact_dao.dart';
-import 'package:fim/data/groups.dart';
-import 'package:fim/data/preferences.dart';
-import 'package:fim/data/stream.dart';
-import 'package:fim/model/message.dart';
+import 'package:fim/service/groups.dart';
+import 'package:fim/service/preferences.dart';
 import 'package:fim/net/api.dart';
 import 'package:fim/page/group/add_member_page.dart';
 import 'package:fim/page/loading_page.dart';

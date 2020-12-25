@@ -1,9 +1,9 @@
 import 'dart:io';
 import 'package:dio/dio.dart';
-import 'package:fim/data/preferences.dart';
+import 'package:fim/pb/business.ext.pb.dart';
+import 'package:fim/service/preferences.dart';
 import 'package:fim/net/api.dart';
 import 'package:fim/page/init_page.dart';
-import 'package:fim/pb/user.ext.pb.dart';
 import 'package:fim/theme/color.dart';
 import 'package:fim/theme/size.dart';
 import 'package:fim/util/loading_dialog.dart';
@@ -106,7 +106,7 @@ class _SetUserPageState extends State<SetUserPage> {
     var req = UpdateUserReq();
     req.nickname = nickname;
     req.avatarUrl = avatarUrl;
-    await userClient.updateUser(req, options: getOptions());
+    await businessClient.updateUser(req, options: getOptions());
 
     await sharedPreferences.setString(nicknameKey, nickname);
     await sharedPreferences.setString(avatarUrlKey, avatarUrl);

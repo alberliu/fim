@@ -1,4 +1,4 @@
-import 'package:fim/data/preferences.dart';
+import 'package:fim/service/preferences.dart';
 import 'package:fim/model/new_friend.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
@@ -47,6 +47,12 @@ class NewFriendDao {
         "UPDATE new_friend SET status = ? where user_id = ?", [status, userId]);
   }
 
+  static void read() async {
+    await database.rawUpdate(
+        "UPDATE new_friend SET status = ? where status = ?",
+        [NewFriend.read, NewFriend.unread]);
+  }
+
   static Future<List<NewFriend>> list() async {
     List<Map> maps = await database.query(
       "new_friend",
@@ -58,5 +64,11 @@ class NewFriendDao {
     }
     friends.sort((left, right) => right.time - left.time);
     return friends;
+  }
+
+  static Future<int> getUnreadNum() async {
+    return Sqflite.firstIntValue(await database.rawQuery(
+        "select count(*) from new_friend where status = ?",
+        [NewFriend.unread]));
   }
 }
