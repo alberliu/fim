@@ -456,7 +456,7 @@ class _ChatPageState extends State<ChatPage> {
     var request = SendMessageReq();
     request.receiverType = pb.ReceiverType.valueOf(widget.objectType.toInt());
     request.receiverId = widget.objectId;
-    request.messageType = pb.MessageType.MT_TEXT;
+    request.messageType = messageType;
     request.messageContent = buffer;
     request.sendTime = now;
     request.isPersist = true;
