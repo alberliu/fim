@@ -13,6 +13,7 @@ import 'package:fim/pb/logic.ext.pb.dart';
 import 'package:fim/net/api.dart';
 import 'package:fim/theme/color.dart';
 import 'package:fim/theme/size.dart';
+import 'package:fim/util/loading_dialog.dart';
 import 'package:fixnum/fixnum.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -142,7 +143,7 @@ class _ChatPageState extends State<ChatPage> {
             child: buildMessageListWidget(context),
           ),
           // 消息发送区域
-          buildSendMessageWidget(),
+          buildSendMessageWidget(context),
         ],
       ),
     );
@@ -235,8 +236,13 @@ class _ChatPageState extends State<ChatPage> {
             borderRadius: BorderRadius.circular(5),
             child: CachedNetworkImage(
               imageUrl: image.url,
-              progressIndicatorBuilder: (context, url, downloadProgress) =>
-                  CircularProgressIndicator(value: downloadProgress.progress),
+              progressIndicatorBuilder: (context, url, downloadProgress) {
+                return Container(
+                  margin: EdgeInsets.all(5),
+                  child: CircularProgressIndicator(
+                      value: downloadProgress.progress),
+                );
+              },
               errorWidget: (context, url, error) => Icon(Icons.error),
             ),
           ),
@@ -301,7 +307,7 @@ class _ChatPageState extends State<ChatPage> {
     );
   }
 
-  Widget buildSendMessageWidget() {
+  Widget buildSendMessageWidget(BuildContext context) {
     return Container(
       color: Color(0xFFD6D6D6),
       child: Row(
@@ -367,7 +373,7 @@ class _ChatPageState extends State<ChatPage> {
                     color: Colors.green,
                     icon: Icon(Icons.add_circle_outline),
                     onPressed: () {
-                      showSheet();
+                      showSheet(context);
                     },
                   ),
           ),
@@ -376,7 +382,7 @@ class _ChatPageState extends State<ChatPage> {
     );
   }
 
-  void showSheet() {
+  void showSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -391,14 +397,14 @@ class _ChatPageState extends State<ChatPage> {
                 child: Text("从相册选取"),
                 onPressed: () {
                   Navigator.pop(context);
-                  pickImage(ImageSource.gallery);
+                  pickImage(context, ImageSource.gallery);
                 },
               ),
               FlatButton(
                 child: Text("拍照"),
                 onPressed: () {
                   Navigator.pop(context);
-                  pickImage(ImageSource.camera);
+                  pickImage(context, ImageSource.camera);
                 },
               ),
             ],
@@ -418,16 +424,18 @@ class _ChatPageState extends State<ChatPage> {
     }
   }
 
-  void pickImage(ImageSource source) async {
+  void pickImage(BuildContext context, ImageSource source) async {
     final pickedFile = await _picker.getImage(source: source);
     if (pickedFile == null) return;
 
+    //showLoadingDialog(context, "正在发送");
     var formData = FormData.fromMap({
       "file":
           await MultipartFile.fromFile(pickedFile.path, filename: "avatar.png"),
     });
     var response = await Dio().post(uploadUrl, data: formData);
     var imageUrl = response.data["data"]["url"];
+    //Navigator.of(context).pop();
 
     var content = pb.Image();
     content.url = imageUrl;
