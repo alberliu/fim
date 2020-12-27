@@ -1,8 +1,6 @@
-import 'dart:typed_data';
 import 'package:fim/service/chat_service.dart';
 import 'package:fim/service/friend_service.dart';
 import 'package:fim/service/groups.dart';
-import 'package:fim/service/open_object.dart';
 import 'package:fim/model/message.dart' as model;
 import 'package:fim/pb/conn.ext.pb.dart';
 import 'package:intl/intl.dart';

@@ -7,7 +7,6 @@ import 'package:fim/service/chat_service.dart';
 import 'package:fim/service/friend_service.dart';
 import 'package:fim/service/groups.dart';
 import 'package:fim/service/new_friend_service.dart';
-import 'package:fim/service/open_object.dart';
 import 'package:fim/service/preferences.dart';
 import 'package:fim/service/recent_contact_service.dart';
 import 'package:fim/model/new_friend.dart';
