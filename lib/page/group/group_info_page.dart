@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:fim/model/message.dart';
 import 'package:fim/service/chat_service.dart';
@@ -121,11 +122,12 @@ class _GroupInfoPageState extends State<GroupInfoPage> {
             ),
         itemCount: members.length + 1,
         itemBuilder: (context, index) {
-          Image image;
+          Widget image;
           String name;
           if (index != members.length) {
             var member = members[index];
-            image = Image.network(member.avatarUrl);
+            image = CachedNetworkImage(
+                imageUrl:member.avatarUrl);
             name = member.nickname;
           } else {
             image = Image.asset("assets/add.png");

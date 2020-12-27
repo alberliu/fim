@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fim/service/friend_service.dart';
 import 'package:fim/model/message.dart';
 import 'package:fim/page/group/groups_page.dart';
@@ -80,7 +81,7 @@ class _FriendsPageState extends State<FriendsPage> {
               itemBuilder: (BuildContext context, int index) {
                 var friend = context.watch<FriendService>().friendList[index];
                 return ListItem(
-                  icon: Image.network(friend.avatarUrl),
+                  icon: CachedNetworkImage(imageUrl:friend.avatarUrl),
                   name: friend.remarks != "" ? friend.remarks : friend.nickname,
                   onTab: () {
                     Navigator.push(

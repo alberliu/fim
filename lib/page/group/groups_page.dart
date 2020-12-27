@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fim/service/preferences.dart';
 import 'package:fim/model/message.dart';
 import 'package:fim/net/api.dart';
@@ -48,7 +49,7 @@ class _GroupsPageState extends State<GroupsPage> {
             : ListView.separated(
                 itemBuilder: (BuildContext context, int index) {
                   return ListItem(
-                    icon: Image.network(groups[index].avatarUrl),
+                    icon: CachedNetworkImage(imageUrl:groups[index].avatarUrl),
                     name: groups[index].name,
                     onTab: () {
                       Navigator.pushReplacement(

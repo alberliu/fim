@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fim/service/chat_service.dart';
 import 'package:fim/service/friend_service.dart';
 import 'package:fim/service/preferences.dart';
@@ -50,8 +51,8 @@ class _FriendPageState extends State<FriendPage> {
                 children: <Widget>[
                   ClipRRect(
                     borderRadius: BorderRadius.circular(10),
-                    child: Image.network(
-                      widget.friend.avatarUrl,
+                    child: CachedNetworkImage(
+                      imageUrl: widget.friend.avatarUrl,
                       width: 50,
                       height: 50,
                     ),

@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fim/page/loading_page.dart';
 import 'package:fim/service/friend_service.dart';
 import 'package:fim/service/new_friend_service.dart';
@@ -117,7 +118,7 @@ class _NewFriendPageState extends State<NewFriendPage> {
                           EdgeInsets.only(left: 5, right: 5, top: 5, bottom: 5),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(10),
-                        child: Image.network(friend.avatarUrl),
+                        child: CachedNetworkImage(imageUrl:friend.avatarUrl),
                       ),
                     ),
                     title: Text("${friend.nickname}"),

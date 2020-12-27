@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fim/service/friend_service.dart';
 import 'package:fim/service/groups.dart';
 import 'package:fim/service/preferences.dart';
@@ -43,7 +44,7 @@ class _CreateGroupPageState extends State<CreateGroupPage> {
             padding: EdgeInsets.only(left: 5, right: 5, top: 5, bottom: 5),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(10),
-              child: Image.network(user.user.avatarUrl),
+              child: CachedNetworkImage(imageUrl:user.user.avatarUrl),
             ),
           ),
         );
@@ -89,7 +90,7 @@ class _CreateGroupPageState extends State<CreateGroupPage> {
                             left: 5, right: 5, top: 5, bottom: 5),
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(10),
-                          child: Image.network(user.user.avatarUrl),
+                          child: CachedNetworkImage(imageUrl:user.user.avatarUrl),
                         ),
                       ),
                       title: Text(user.user.nickname),

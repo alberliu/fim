@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:ffi';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fim/service/chat_service.dart';
 import 'package:fim/service/preferences.dart';
 import 'package:fim/service/recent_contact_service.dart';
@@ -37,6 +38,7 @@ class _ChatPageState extends State<ChatPage> {
   TextEditingController _editingController = TextEditingController();
   Future future;
   final _picker = ImagePicker();
+  String beforeInputText = "";
 
   @override
   void initState() {
@@ -231,11 +233,11 @@ class _ChatPageState extends State<ChatPage> {
           ),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(5),
-            child: Image.network(
-              image.url,
-              errorBuilder: (context, error, stack) {
-                return Container();
-              },
+            child: CachedNetworkImage(
+              imageUrl: image.url,
+              progressIndicatorBuilder: (context, url, downloadProgress) =>
+                  CircularProgressIndicator(value: downloadProgress.progress),
+              errorWidget: (context, url, error) => Icon(Icons.error),
             ),
           ),
         );
@@ -261,8 +263,8 @@ class _ChatPageState extends State<ChatPage> {
                   margin: EdgeInsets.only(right: 10),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(5),
-                    child: Image.network(message.senderAvatarUrl,
-                        fit: BoxFit.cover),
+                    child: CachedNetworkImage(
+                        imageUrl: message.senderAvatarUrl, fit: BoxFit.cover),
                   ),
                 ),
           Expanded(
@@ -287,7 +289,8 @@ class _ChatPageState extends State<ChatPage> {
                   margin: EdgeInsets.only(left: 10),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(5),
-                    child: Image.network(getAvatarUrl(), fit: BoxFit.fill),
+                    child: CachedNetworkImage(
+                        imageUrl: getAvatarUrl(), fit: BoxFit.fill),
                   ),
                 )
               : Container(
@@ -318,7 +321,15 @@ class _ChatPageState extends State<ChatPage> {
                   minLines: 1,
                   autofocus: false,
                   onChanged: (value) {
-                    setState(() {});
+                    if (beforeInputText != "" &&
+                        _editingController.text == "") {
+                      setState(() {});
+                    }
+                    if (beforeInputText == "" &&
+                        _editingController.text != "") {
+                      setState(() {});
+                    }
+                    beforeInputText = _editingController.text;
                   },
                   style: TextStyle(
                     fontSize: 16,

@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fim/pb/business.ext.pb.dart';
 import 'package:fim/service/preferences.dart';
 import 'package:fim/net/api.dart';
@@ -42,7 +43,7 @@ class _AddFriendPageState extends State<AddFriendPage> {
                   children: <Widget>[
                     ClipRRect(
                       borderRadius: BorderRadius.circular(10),
-                      child: Image.network(this.widget.user.avatarUrl),
+                      child: CachedNetworkImage(imageUrl:this.widget.user.avatarUrl),
                     ),
                     Container(
                       margin: EdgeInsets.only(left: 20.0),

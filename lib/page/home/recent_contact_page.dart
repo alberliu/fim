@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fim/service/recent_contact_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:provider/provider.dart';
@@ -99,7 +100,7 @@ class _ListItemState extends State<_ListItem> {
                   padding: EdgeInsets.all(5),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(7),
-                    child: Image.network(widget.icon),
+                    child: CachedNetworkImage(imageUrl: widget.icon),
                   ),
                 ),
               ),

@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fim/pb/business.ext.pb.dart';
 import 'package:fim/service/preferences.dart';
 import 'package:fim/net/api.dart';
@@ -64,7 +65,7 @@ class _SearchUserPageState extends State<SearchUserPage> {
                         EdgeInsets.only(left: 5, right: 5, top: 5, bottom: 5),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(10),
-                      child: Image.network(users[index].avatarUrl),
+                      child: CachedNetworkImage(imageUrl:users[index].avatarUrl),
                     ),
                   ),
                   title: Text("${users[index].nickname}"),

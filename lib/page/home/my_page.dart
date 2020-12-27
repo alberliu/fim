@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fim/page/set_user_page.dart';
 import 'package:fim/page/sign_in_page.dart';
 import 'package:fim/theme/color.dart';
@@ -35,8 +36,8 @@ class _MyPageState extends State<MyPage> {
               children: <Widget>[
                 ClipRRect(
                   borderRadius: BorderRadius.circular(10),
-                  child: Image.network(
-                    getAvatarUrl(),
+                  child: CachedNetworkImage(
+                    imageUrl: getAvatarUrl(),
                     width: 50,
                     height: 50,
                   ),
