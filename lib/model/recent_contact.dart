@@ -1,4 +1,5 @@
 import 'dart:typed_data';
+import 'package:fim/service/chat_service.dart';
 import 'package:fim/service/friend_service.dart';
 import 'package:fim/service/groups.dart';
 import 'package:fim/service/open_object.dart';
@@ -37,7 +38,7 @@ class RecentContact {
     contact.lastMessage = getLastMessage(message);
 
     // 判断聊天窗口是否打开
-    if (OpenedObject.isOpened(contact.objectType, contact.objectId)) {
+    if (chatService.isOpen(contact.objectType, contact.objectId)) {
       contact.unread = 0;
     } else {
       contact.unread = 1;

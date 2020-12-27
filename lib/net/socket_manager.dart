@@ -174,7 +174,7 @@ class SocketManager {
       // 保存到最近联系人
       var contact = await RecentContact.build(message);
       recentContactService.onMessage(contact);
-      if (!OpenedObject.isOpened(contact.objectType, contact.objectId)) {
+      if (!chatService.isOpen(contact.objectType, contact.objectId)) {
         showNotifications(contact.name, contact.lastMessage);
       }
       return;
@@ -188,7 +188,7 @@ class SocketManager {
       var contact = await RecentContact.build(message);
       recentContactService.onMessage(contact);
 
-      if (!OpenedObject.isOpened(contact.objectType, contact.objectId)) {
+      if (!chatService.isOpen(contact.objectType, contact.objectId)) {
         showNotifications(contact.name, contact.lastMessage);
       }
 

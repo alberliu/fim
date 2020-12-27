@@ -33,6 +33,14 @@ class ChatService with ChangeNotifier {
     map.remove(key(objectType, objectId));
   }
 
+  bool isOpen(int objectType, int objectId) {
+    var chatData = map[key(objectType, objectId)];
+    if (chatData == null) {
+      return false;
+    }
+    return true;
+  }
+
   ChatData getChatData(int objectType, int objectId) {
     return map[key(objectType, objectId)];
   }

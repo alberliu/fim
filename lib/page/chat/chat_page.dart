@@ -39,7 +39,7 @@ class _ChatPageState extends State<ChatPage> {
   TextEditingController _editingController = TextEditingController();
   Future future;
   final _picker = ImagePicker();
-  String beforeInputText = "";
+  String preInputText = "";
 
   @override
   void initState() {
@@ -288,7 +288,6 @@ class _ChatPageState extends State<ChatPage> {
           ),
           isMyMessage
               ? Container(
-                  //color: Colors.grey,
                   alignment: Alignment.topRight,
                   width: 40,
                   height: 40,
@@ -327,15 +326,14 @@ class _ChatPageState extends State<ChatPage> {
                   minLines: 1,
                   autofocus: false,
                   onChanged: (value) {
-                    if (beforeInputText != "" &&
-                        _editingController.text == "") {
+                    print(value);
+                    if (preInputText != "" && _editingController.text == "") {
                       setState(() {});
                     }
-                    if (beforeInputText == "" &&
-                        _editingController.text != "") {
+                    if (preInputText == "" && _editingController.text != "") {
                       setState(() {});
                     }
-                    beforeInputText = _editingController.text;
+                    preInputText = _editingController.text;
                   },
                   style: TextStyle(
                     fontSize: 16,
@@ -453,6 +451,7 @@ class _ChatPageState extends State<ChatPage> {
     sendMessage(pb.MessageType.MT_TEXT, textContent);
     setState(() {
       _editingController.text = "";
+      preInputText = "";
     });
   }
 
