@@ -15,7 +15,10 @@ import 'package:fim/theme/size.dart';
 import 'package:fixnum/fixnum.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:protobuf/protobuf.dart';
 import 'package:provider/provider.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:dio/dio.dart';
 
 class ChatPage extends StatefulWidget {
   Int64 objectType;
@@ -33,6 +36,7 @@ class _ChatPageState extends State<ChatPage> {
   ScrollController _scrollController = ScrollController();
   TextEditingController _editingController = TextEditingController();
   Future future;
+  final _picker = ImagePicker();
 
   @override
   void initState() {
@@ -176,7 +180,8 @@ class _ChatPageState extends State<ChatPage> {
     }
 
     var isMyMessage = message.senderId == getUserId().toInt();
-    var text = pb.Text.fromBuffer(message.messageContent).text;
+
+    // 消息的用户信息的昵称区域，如果是群组信息，需要显示有用户昵称
     Widget nameWidget;
     if (!isMyMessage && widget.objectType != model.Message.objectTypeUser) {
       nameWidget = Container(
@@ -187,6 +192,56 @@ class _ChatPageState extends State<ChatPage> {
       );
     } else {
       nameWidget = Container();
+    }
+
+    // 消息内容区域
+    Widget contentWidget;
+    var messageType = pb.MessageType.valueOf(message.messageType);
+    switch (messageType) {
+      case pb.MessageType.MT_TEXT:
+        var text = pb.Text.fromBuffer(message.messageContent);
+
+        contentWidget = Container(
+          padding: EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(5),
+            color: isMyMessage ? Colors.green : Colors.white,
+          ),
+          child: SelectableText(
+            text.text,
+            style: TextStyle(
+              fontSize: 16.0,
+              height: 1,
+            ),
+            strutStyle: StrutStyle(
+              forceStrutHeight: true,
+              fontSize: 16,
+              height: 1,
+              leading: 0.5,
+            ),
+          ),
+        );
+        break;
+      case pb.MessageType.MT_IMAGE:
+        var image = pb.Image.fromBuffer(message.messageContent);
+        contentWidget = ConstrainedBox(
+          constraints: BoxConstraints(
+            maxWidth: 100,
+            maxHeight: 100,
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(5),
+            child: Image.network(
+              image.url,
+              errorBuilder: (context, error, stack) {
+                return Container();
+              },
+            ),
+          ),
+        );
+
+        break;
+      default:
     }
 
     return Container(
@@ -218,26 +273,7 @@ class _ChatPageState extends State<ChatPage> {
                   alignment: isMyMessage
                       ? Alignment.centerRight
                       : Alignment.centerLeft,
-                  child: Container(
-                    padding: EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(5),
-                      color: isMyMessage ? Colors.green : Colors.white,
-                    ),
-                    child: Text(
-                      text,
-                      style: TextStyle(
-                        fontSize: 16.0,
-                        height: 1,
-                      ),
-                      strutStyle: StrutStyle(
-                        forceStrutHeight: true,
-                        fontSize: 16,
-                        height: 1,
-                        leading: 0.5,
-                      ),
-                    ),
-                  ),
+                  child: contentWidget,
                 ),
               ],
             ),
@@ -280,6 +316,10 @@ class _ChatPageState extends State<ChatPage> {
                   cursorWidth: 1,
                   maxLines: 4,
                   minLines: 1,
+                  autofocus: false,
+                  onChanged: (value) {
+                    setState(() {});
+                  },
                   style: TextStyle(
                     fontSize: 16,
                     height: 1,
@@ -304,20 +344,57 @@ class _ChatPageState extends State<ChatPage> {
             ),
           ),
           Container(
-            //width: 70,
             height: 60,
-            //color: Colors.red,
             alignment: Alignment.center,
-            child: IconButton(
-              //alignment: Alignment.bottomCenter,
-              color: Colors.green,
-              icon: Icon(Icons.send),
-              onPressed: sendMessage,
-            ),
+            child: _editingController.text != ""
+                ? IconButton(
+                    color: Colors.green,
+                    icon: Icon(Icons.send),
+                    onPressed: sendTextMessage,
+                  )
+                : IconButton(
+                    color: Colors.green,
+                    icon: Icon(Icons.add_circle_outline),
+                    onPressed: () {
+                      showSheet();
+                    },
+                  ),
           ),
         ],
       ),
     );
+  }
+
+  void showSheet() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (BuildContext context) {
+        return new Container(
+          height: 100,
+          width: 100,
+          color: backgroundColor,
+          child: Column(
+            children: [
+              FlatButton(
+                child: Text("从相册选取"),
+                onPressed: () {
+                  Navigator.pop(context);
+                  pickImage(ImageSource.gallery);
+                },
+              ),
+              FlatButton(
+                child: Text("拍照"),
+                onPressed: () {
+                  Navigator.pop(context);
+                  pickImage(ImageSource.camera);
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    ).then((value) {});
   }
 
   void loadMore() async {
@@ -330,18 +407,38 @@ class _ChatPageState extends State<ChatPage> {
     }
   }
 
-  void sendMessage() async {
-    print("send message");
+  void pickImage(ImageSource source) async {
+    final pickedFile = await _picker.getImage(source: source);
+    if (pickedFile == null) return;
+
+    var formData = FormData.fromMap({
+      "file":
+          await MultipartFile.fromFile(pickedFile.path, filename: "avatar.png"),
+    });
+    var response = await Dio().post(uploadUrl, data: formData);
+    var imageUrl = response.data["data"]["url"];
+
+    var content = pb.Image();
+    content.url = imageUrl;
+    sendMessage(pb.MessageType.MT_IMAGE, content);
+  }
+
+  void sendTextMessage() {
     var text = _editingController.text.trim();
     if (text.length == 0) {
       return;
     }
 
-    print("send message:$text");
-
     var textContent = pb.Text();
     textContent.text = text;
-    var buffer = textContent.writeToBuffer();
+    sendMessage(pb.MessageType.MT_TEXT, textContent);
+    setState(() {
+      _editingController.text = "";
+    });
+  }
+
+  void sendMessage(pb.MessageType messageType, GeneratedMessage content) async {
+    var buffer = content.writeToBuffer();
     var now = Int64(DateTime.now().millisecondsSinceEpoch);
 
     // 发送消息到服务器
@@ -362,7 +459,7 @@ class _ChatPageState extends State<ChatPage> {
     message.senderNickname = getNickname();
     message.senderAvatarUrl = getAvatarUrl();
     message.toUserIds = ""; // todo
-    message.messageType = pb.MessageType.MT_TEXT.value;
+    message.messageType = messageType.value;
     message.messageContent = buffer;
     message.seq = response.seq.toInt();
     message.sendTime = now.toInt();
@@ -372,9 +469,5 @@ class _ChatPageState extends State<ChatPage> {
     var contact = await RecentContact.build(message);
     contact.unread = 0;
     recentContactService.onMessage(contact);
-
-    setState(() {
-      _editingController.text = "";
-    });
   }
 }

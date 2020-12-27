@@ -9,6 +9,7 @@ class NewFriendService with ChangeNotifier {
   List<NewFriend> list;
 
   initUnread() async {
+    print("initUnread");
     unreadNum = await NewFriendDao.getUnreadNum();
   }
 

@@ -87,7 +87,7 @@ class InitPage extends StatelessWidget {
     await newFriendService.initUnread();
 
     // 长连接登录
-    await SocketManager().connect("112.126.102.84", 8080);
+    await SocketManager().connect(baseUrl, 8080);
 
     print("跳转至主页");
     Navigator.pushReplacement(

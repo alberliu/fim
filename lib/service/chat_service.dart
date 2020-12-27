@@ -43,7 +43,8 @@ class ChatService with ChangeNotifier {
     var chatData = map[key(event.objectType, event.objectId)];
     if (chatData == null) return;
 
-    if (event.messageType == MessageType.MT_TEXT.value) {
+    if (event.messageType == MessageType.MT_TEXT.value ||
+        event.messageType == MessageType.MT_IMAGE.value) {
       chatData.messages.insert(0, event);
       notifyListeners();
     }
@@ -72,6 +73,14 @@ class ChatService with ChangeNotifier {
     var moreMessage =
         await MessageDao.list(objectType, objectId, messages.last.seq, 20);
     messages.addAll(moreMessage);
+    notifyListeners();
+  }
+
+  void onChangeName(int objectType, int objectId, String name) {
+    var chatData = map[key(objectType, objectId)];
+    if (chatData == null) return;
+
+    chatData.name = name;
     notifyListeners();
   }
 }

@@ -10,7 +10,7 @@ class NewFriendDao {
     database = await openDatabase(
       join(await getDatabasesPath(), getUserId().toString() + '/new_friend.db'),
       onCreate: (db, version) {
-        print("创建数据库 recent_contact");
+        print("创建数据库 new_friend");
         return _onCreate(db, version);
       },
       version: 1,

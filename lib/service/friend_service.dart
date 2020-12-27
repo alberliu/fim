@@ -11,6 +11,7 @@ class FriendService with ChangeNotifier {
   Map<Int64, Friend> friendMap;
 
   init() async {
+    print("friendService init");
     var response =
         await logicClient.getFriends(GetFriendsReq(), options: getOptions());
 

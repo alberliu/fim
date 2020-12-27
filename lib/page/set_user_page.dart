@@ -99,7 +99,7 @@ class _SetUserPageState extends State<SetUserPage> {
         "file": await MultipartFile.fromFile(file.path, filename: "avatar.png"),
       });
       var response =
-          await Dio().post("http://112.126.102.84:8085/upload", data: formData);
+          await Dio().post(uploadUrl, data: formData);
       avatarUrl = response.data["data"]["url"];
     }
 

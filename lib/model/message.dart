@@ -98,7 +98,7 @@ class Message {
     var command = pb.Command.fromBuffer(messageContent);
     if (command.code == PushCode.PC_UPDATE_GROUP.value) {
       var push = UpdateGroupPush.fromBuffer(command.data);
-      text = "${push.optName} 将群名修改为 ${push.name}";
+      text = "${push.optName} 修改了群组信息";
     }
     if (command.code == PushCode.PC_ADD_GROUP_MEMBERS.value) {
       var push = AddGroupMembersPush.fromBuffer(command.data);

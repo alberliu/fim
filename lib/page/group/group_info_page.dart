@@ -1,5 +1,7 @@
 import 'dart:io';
 import 'package:dio/dio.dart';
+import 'package:fim/model/message.dart';
+import 'package:fim/service/chat_service.dart';
 import 'package:fim/service/groups.dart';
 import 'package:fim/service/preferences.dart';
 import 'package:fim/net/api.dart';
@@ -34,8 +36,6 @@ class _GroupInfoPageState extends State<GroupInfoPage> {
   Group group;
   File file;
 
-  String changeName;
-
   TextEditingController nameController = TextEditingController();
   TextEditingController introductionController = TextEditingController();
 
@@ -65,53 +65,47 @@ class _GroupInfoPageState extends State<GroupInfoPage> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      child: Scaffold(
-        appBar: AppBar(
-          toolbarHeight: appBarHeight,
-          title: Text(widget.name),
-          brightness: appBarBrightness,
-        ),
-        body: loading
-            ? LoadingPage()
-            : Container(
-                child: SingleChildScrollView(
-                  primary: true,
-                  child: Column(
-                    children: [
-                      buildMembersWidget(),
-                      Container(height: 10, color: backgroundColor),
-                      EditImage(
-                        title: "头像",
-                        url: group.avatarUrl,
-                        onPicked: (pickedFile) => file = pickedFile,
-                      ),
-                      Container(height: 10, color: backgroundColor),
-                      EditItem(
-                        title: "名称",
-                        hintText: "请填写群组名称",
-                        controller: nameController,
-                      ),
-                      Container(height: 5, color: backgroundColor),
-                      EditItem(
-                        title: "简介",
-                        hintText: "简介",
-                        controller: introductionController,
-                      ),
-                      Container(height: 20, color: backgroundColor),
-                      CommitButton(
-                        text: "保存",
-                        onPressed: () => onCommit(context),
-                      )
-                    ],
-                  ),
+    return Scaffold(
+      appBar: AppBar(
+        toolbarHeight: appBarHeight,
+        title: Text(widget.name),
+        brightness: appBarBrightness,
+      ),
+      body: loading
+          ? LoadingPage()
+          : Container(
+              child: SingleChildScrollView(
+                primary: true,
+                child: Column(
+                  children: [
+                    buildMembersWidget(),
+                    Container(height: 10, color: backgroundColor),
+                    EditImage(
+                      title: "头像",
+                      url: group.avatarUrl,
+                      onPicked: (pickedFile) => file = pickedFile,
+                    ),
+                    Container(height: 10, color: backgroundColor),
+                    EditItem(
+                      title: "名称",
+                      hintText: "请填写群组名称",
+                      controller: nameController,
+                    ),
+                    Container(height: 5, color: backgroundColor),
+                    EditItem(
+                      title: "简介",
+                      hintText: "简介",
+                      controller: introductionController,
+                    ),
+                    Container(height: 20, color: backgroundColor),
+                    CommitButton(
+                      text: "保存",
+                      onPressed: () => onCommit(context),
+                    )
+                  ],
                 ),
               ),
-      ),
-      onWillPop: () async {
-        Navigator.pop(context, changeName);
-        return false;
-      },
+            ),
     );
   }
 
@@ -186,8 +180,7 @@ class _GroupInfoPageState extends State<GroupInfoPage> {
       var formData = FormData.fromMap({
         "file": await MultipartFile.fromFile(file.path, filename: "avatar.png"),
       });
-      var response =
-          await Dio().post("http://112.126.102.84:8085/upload", data: formData);
+      var response = await Dio().post(uploadUrl, data: formData);
       avatarUrl = response.data["data"]["url"];
     }
 
@@ -201,10 +194,12 @@ class _GroupInfoPageState extends State<GroupInfoPage> {
     group.name = req.name;
     group.avatarUrl = req.avatarUrl;
 
-    changeName = req.name;
     setState(() {
       widget.name = req.name;
     });
+
+    chatService.onChangeName(
+        Message.objectTypeGroup, group.groupId.toInt(), req.name);
     Navigator.of(context).pop();
     toast("修改成功");
   }

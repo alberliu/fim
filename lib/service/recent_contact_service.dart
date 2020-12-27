@@ -9,6 +9,7 @@ class RecentContactService with ChangeNotifier {
   int unReadNum;
 
   init() async {
+    print("recentContactService init");
     contacts = await RecentContactDao.list();
     unReadNum = getUnreadNum();
   }
