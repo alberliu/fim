@@ -13,7 +13,6 @@ import 'package:fim/pb/logic.ext.pb.dart';
 import 'package:fim/net/api.dart';
 import 'package:fim/theme/color.dart';
 import 'package:fim/theme/size.dart';
-import 'package:fim/util/loading_dialog.dart';
 import 'package:fixnum/fixnum.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -46,20 +45,18 @@ class _ChatPageState extends State<ChatPage> {
     super.initState();
     print("chatBody initState");
 
+    // 初始化聊天数据
     future = chatService.init(
         widget.objectType.toInt(), widget.objectId.toInt(), widget.name);
 
-    initData();
-    readMessage();
-  }
-
-  void initData() async {
+    // 添加下拉加载更多聊天数据
     _scrollController.addListener(loadMore);
-  }
 
-  readMessage() {
-    recentContactService.readMessage(
-        widget.objectType.toInt(), widget.objectId.toInt());
+    // 标记用户信息已读
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      recentContactService.readMessage(
+          widget.objectType.toInt(), widget.objectId.toInt());
+    });
   }
 
   @override
@@ -75,49 +72,7 @@ class _ChatPageState extends State<ChatPage> {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           return Scaffold(
-            appBar: AppBar(
-              toolbarHeight: appBarHeight,
-              title: Text(context
-                  .watch<ChatService>()
-                  .getChatData(
-                      widget.objectType.toInt(), widget.objectId.toInt())
-                  .name),
-              centerTitle: true,
-              actions: <Widget>[
-                // 非隐藏的菜单
-                new IconButton(
-                  icon: new Icon(Icons.more_horiz),
-                  tooltip: 'Add Alarm',
-                  onPressed: () async {
-                    String changeName;
-                    if (widget.objectType == model.Message.objectTypeUser) {
-                      changeName = await Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              FriendPage(friendId: widget.objectId),
-                        ),
-                      );
-                    }
-
-                    if (widget.objectType == model.Message.objectTypeGroup) {
-                      changeName = await Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => GroupInfoPage(
-                              groupId: widget.objectId, name: widget.name),
-                        ),
-                      );
-                    }
-                    if (changeName != null) {
-                      widget.name = changeName;
-                      setState(() {});
-                    }
-                  },
-                ),
-              ],
-              brightness: appBarBrightness,
-            ),
+            appBar: buildAppBar(context),
             body: buildBody(context),
           );
         }
@@ -130,6 +85,50 @@ class _ChatPageState extends State<ChatPage> {
           ),
         );
       },
+    );
+  }
+
+  AppBar buildAppBar(BuildContext context) {
+    return AppBar(
+      toolbarHeight: appBarHeight,
+      title: Text(context
+          .watch<ChatService>()
+          .getChatData(widget.objectType.toInt(), widget.objectId.toInt())
+          .name),
+      centerTitle: true,
+      actions: <Widget>[
+        // 非隐藏的菜单
+        new IconButton(
+          icon: new Icon(Icons.more_horiz),
+          tooltip: 'Add Alarm',
+          onPressed: () async {
+            String changeName;
+            if (widget.objectType == model.Message.objectTypeUser) {
+              changeName = await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => FriendPage(friendId: widget.objectId),
+                ),
+              );
+            }
+
+            if (widget.objectType == model.Message.objectTypeGroup) {
+              changeName = await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => GroupInfoPage(
+                      groupId: widget.objectId, name: widget.name),
+                ),
+              );
+            }
+            if (changeName != null) {
+              widget.name = changeName;
+              setState(() {});
+            }
+          },
+        ),
+      ],
+      brightness: appBarBrightness,
     );
   }
 
@@ -255,14 +254,15 @@ class _ChatPageState extends State<ChatPage> {
     return Container(
       margin: EdgeInsets.only(top: 10, bottom: 10, left: 10, right: 10),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment:
+            isMyMessage ? CrossAxisAlignment.end : CrossAxisAlignment.start,
         children: <Widget>[
+          // 对方头像区域
           isMyMessage
               ? Container(
                   width: 50,
                 )
               : Container(
-                  // color: Colors.grey,
                   alignment: Alignment.topRight,
                   width: 40,
                   height: 40,
@@ -273,6 +273,7 @@ class _ChatPageState extends State<ChatPage> {
                         imageUrl: message.senderAvatarUrl, fit: BoxFit.cover),
                   ),
                 ),
+          // 消息区域
           Expanded(
             child: Column(
               children: [
@@ -286,6 +287,7 @@ class _ChatPageState extends State<ChatPage> {
               ],
             ),
           ),
+          // 己方头像区域
           isMyMessage
               ? Container(
                   alignment: Alignment.topRight,
@@ -426,14 +428,12 @@ class _ChatPageState extends State<ChatPage> {
     final pickedFile = await _picker.getImage(source: source);
     if (pickedFile == null) return;
 
-    //showLoadingDialog(context, "正在发送");
     var formData = FormData.fromMap({
       "file":
           await MultipartFile.fromFile(pickedFile.path, filename: "avatar.png"),
     });
     var response = await Dio().post(uploadUrl, data: formData);
     var imageUrl = response.data["data"]["url"];
-    //Navigator.of(context).pop();
 
     var content = pb.Image();
     content.url = imageUrl;

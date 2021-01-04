@@ -82,7 +82,7 @@ class SocketManager {
         socket.flush();
 
         // 触发定时心跳
-        Timer.periodic(Duration(minutes: 4, seconds: 50), (timer) {
+        Timer.periodic(Duration(minutes: 4, seconds: 30), (timer) {
           print("heartbeat input");
           socket.add(encode(pb.PackageType.PT_HEARTBEAT, null));
           socket.flush();
