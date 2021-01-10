@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:ffi';
+import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fim/service/chat_service.dart';
 import 'package:fim/service/preferences.dart';
@@ -233,17 +234,19 @@ class _ChatPageState extends State<ChatPage> {
           ),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(5),
-            child: CachedNetworkImage(
-              imageUrl: image.url,
-              progressIndicatorBuilder: (context, url, downloadProgress) {
-                return Container(
-                  margin: EdgeInsets.all(5),
-                  child: CircularProgressIndicator(
-                      value: downloadProgress.progress),
-                );
-              },
-              errorWidget: (context, url, error) => Icon(Icons.error),
-            ),
+            child: image.url.startsWith("/")
+                ? Image.file(File(image.url))
+                : CachedNetworkImage(
+                    imageUrl: image.url,
+                    progressIndicatorBuilder: (context, url, downloadProgress) {
+                      return Container(
+                        margin: EdgeInsets.all(5),
+                        child: CircularProgressIndicator(
+                            value: downloadProgress.progress),
+                      );
+                    },
+                    errorWidget: (context, url, error) => Icon(Icons.error),
+                  ),
           ),
         );
 
@@ -253,57 +256,76 @@ class _ChatPageState extends State<ChatPage> {
 
     return Container(
       margin: EdgeInsets.only(top: 10, bottom: 10, left: 10, right: 10),
-      child: Row(
-        crossAxisAlignment:
-            isMyMessage ? CrossAxisAlignment.end : CrossAxisAlignment.start,
-        children: <Widget>[
-          // 对方头像区域
-          isMyMessage
-              ? Container(
-                  width: 50,
-                )
-              : Container(
-                  alignment: Alignment.topRight,
-                  width: 40,
-                  height: 40,
-                  margin: EdgeInsets.only(right: 10),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(5),
-                    child: CachedNetworkImage(
-                        imageUrl: message.senderAvatarUrl, fit: BoxFit.cover),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          print("constraints ${constraints.maxWidth}");
+          return Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment:
+                isMyMessage ? MainAxisAlignment.end : MainAxisAlignment.start,
+            children: <Widget>[
+              // 对方头像区域
+              isMyMessage
+                  ? Container()
+                  : Container(
+                      alignment: Alignment.topRight,
+                      width: 40,
+                      height: 40,
+                      margin: EdgeInsets.only(right: 10),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(5),
+                        child: CachedNetworkImage(
+                            imageUrl: message.senderAvatarUrl,
+                            fit: BoxFit.cover),
+                      ),
+                    ),
+
+              // 发送加载
+              message.status == -1
+                  ? Container(
+                      padding: EdgeInsets.all(10),
+                      alignment: Alignment.centerRight,
+                      child: SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(
+                          valueColor: AlwaysStoppedAnimation(Colors.grey),
+                        ),
+                      ),
+                    )
+                  : Container(),
+
+              // 消息区域
+              Column(
+                children: [
+                  nameWidget,
+                  LimitedBox(
+                    maxWidth: constraints.maxWidth - 100,
+                    child: Container(
+                      color: Colors.amber,
+                      child: contentWidget,
+                    ),
                   ),
-                ),
-          // 消息区域
-          Expanded(
-            child: Column(
-              children: [
-                nameWidget,
-                Container(
-                  alignment: isMyMessage
-                      ? Alignment.centerRight
-                      : Alignment.centerLeft,
-                  child: contentWidget,
-                ),
-              ],
-            ),
-          ),
-          // 己方头像区域
-          isMyMessage
-              ? Container(
-                  alignment: Alignment.topRight,
-                  width: 40,
-                  height: 40,
-                  margin: EdgeInsets.only(left: 10),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(5),
-                    child: CachedNetworkImage(
-                        imageUrl: getAvatarUrl(), fit: BoxFit.fill),
-                  ),
-                )
-              : Container(
-                  width: 50,
-                ),
-        ],
+                ],
+              ),
+
+              // 己方头像区域
+              isMyMessage
+                  ? Container(
+                      alignment: Alignment.topRight,
+                      width: 40,
+                      height: 40,
+                      margin: EdgeInsets.only(left: 10),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(5),
+                        child: CachedNetworkImage(
+                            imageUrl: getAvatarUrl(), fit: BoxFit.fill),
+                      ),
+                    )
+                  : Container(),
+            ],
+          );
+        },
       ),
     );
   }
@@ -428,15 +450,10 @@ class _ChatPageState extends State<ChatPage> {
     final pickedFile = await _picker.getImage(source: source);
     if (pickedFile == null) return;
 
-    var formData = FormData.fromMap({
-      "file":
-          await MultipartFile.fromFile(pickedFile.path, filename: "avatar.png"),
-    });
-    var response = await Dio().post(uploadUrl, data: formData);
-    var imageUrl = response.data["data"]["url"];
+    print("pickedFile:${pickedFile.path}");
 
     var content = pb.Image();
-    content.url = imageUrl;
+    content.url = pickedFile.path;
     sendMessage(pb.MessageType.MT_IMAGE, content);
   }
 
@@ -448,16 +465,44 @@ class _ChatPageState extends State<ChatPage> {
 
     var textContent = pb.Text();
     textContent.text = text;
-    sendMessage(pb.MessageType.MT_TEXT, textContent);
     setState(() {
       _editingController.text = "";
       preInputText = "";
     });
+    sendMessage(pb.MessageType.MT_TEXT, textContent);
   }
 
   void sendMessage(pb.MessageType messageType, GeneratedMessage content) async {
     var buffer = content.writeToBuffer();
     var now = Int64(DateTime.now().millisecondsSinceEpoch);
+
+    var message = model.Message();
+    message.objectType = widget.objectType.toInt();
+    message.objectId = widget.objectId.toInt();
+    message.senderId = getUserId().toInt();
+    message.senderNickname = getNickname();
+    message.senderAvatarUrl = getAvatarUrl();
+    message.toUserIds = ""; // todo
+    message.messageType = messageType.value;
+    message.messageContent = buffer;
+    //message.seq = response.seq.toInt();
+    message.sendTime = now.toInt();
+    message.status = -1;
+    // 渲染到UI
+    chatService.sendMessage(message);
+
+    // 如果是图片，需要上传图片
+    if (messageType == pb.MessageType.MT_IMAGE) {
+      var image = pb.Image.fromBuffer(buffer);
+      var formData = FormData.fromMap({
+        "file": await MultipartFile.fromFile(image.url, filename: "avatar.png"),
+      });
+      var response = await Dio().post(uploadUrl, data: formData);
+      var imageUrl = response.data["data"]["url"];
+      var content = pb.Image();
+      content.url = imageUrl;
+      buffer = content.writeToBuffer();
+    }
 
     // 发送消息到服务器
     var request = SendMessageReq();
@@ -470,19 +515,10 @@ class _ChatPageState extends State<ChatPage> {
     var response =
         await logicClient.sendMessage(request, options: await getOptions());
 
-    var message = model.Message();
-    message.objectType = widget.objectType.toInt();
-    message.objectId = widget.objectId.toInt();
-    message.senderId = getUserId().toInt();
-    message.senderNickname = getNickname();
-    message.senderAvatarUrl = getAvatarUrl();
-    message.toUserIds = ""; // todo
-    message.messageType = messageType.value;
-    message.messageContent = buffer;
     message.seq = response.seq.toInt();
-    message.sendTime = now.toInt();
-
-    chatService.onMessage(message);
+    message.status = 0;
+    setState(() {});
+    chatService.save(message);
 
     var contact = await RecentContact.build(message);
     contact.unread = 0;

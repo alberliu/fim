@@ -45,6 +45,21 @@ class ChatService with ChangeNotifier {
     return map[key(objectType, objectId)];
   }
 
+  void sendMessage(Message event) async {
+    var chatData = map[key(event.objectType, event.objectId)];
+    if (chatData == null) return;
+
+    if (event.messageType == MessageType.MT_TEXT.value ||
+        event.messageType == MessageType.MT_IMAGE.value) {
+      chatData.messages.insert(0, event);
+      notifyListeners();
+    }
+  }
+
+  void save(Message event) async {
+    await MessageDao.add(event);
+  }
+
   void onMessage(Message event) async {
     await MessageDao.add(event);
 
