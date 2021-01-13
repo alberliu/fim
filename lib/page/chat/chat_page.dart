@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:ffi';
 import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:fim/page/photo_view_page.dart';
 import 'package:fim/service/chat_service.dart';
 import 'package:fim/service/preferences.dart';
 import 'package:fim/service/recent_contact_service.dart';
@@ -17,6 +18,7 @@ import 'package:fim/theme/size.dart';
 import 'package:fixnum/fixnum.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:photo_view/photo_view.dart';
 import 'package:protobuf/protobuf.dart';
 import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
@@ -160,7 +162,7 @@ class _ChatPageState extends State<ChatPage> {
         child: ListView.builder(
           itemCount: messages.length,
           itemBuilder: (BuildContext context, int index) {
-            return buildMessageWidget(messages[index]);
+            return buildMessageWidget(context, messages[index]);
           },
           reverse: true,
           controller: _scrollController,
@@ -169,7 +171,7 @@ class _ChatPageState extends State<ChatPage> {
     );
   }
 
-  Widget buildMessageWidget(model.Message message) {
+  Widget buildMessageWidget(BuildContext context, model.Message message) {
     if (message.messageType == pb.MessageType.MT_COMMAND.value) {
       String text = message.getCommandText();
       if (text != "") {
@@ -227,29 +229,48 @@ class _ChatPageState extends State<ChatPage> {
         break;
       case pb.MessageType.MT_IMAGE:
         var image = pb.Image.fromBuffer(message.messageContent);
-        contentWidget = ConstrainedBox(
-          constraints: BoxConstraints(
-            maxWidth: 100,
-            maxHeight: 100,
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(5),
-            child: image.url.startsWith("/")
-                ? Image.file(File(image.url))
-                : CachedNetworkImage(
-                    imageUrl: image.url,
-                    progressIndicatorBuilder: (context, url, downloadProgress) {
-                      return Container(
-                        margin: EdgeInsets.all(5),
-                        child: CircularProgressIndicator(
-                            value: downloadProgress.progress),
-                      );
-                    },
-                    errorWidget: (context, url, error) => Icon(Icons.error),
-                  ),
+        contentWidget = GestureDetector(
+          onTap: () {
+            // Navigator.push(
+            // context, MaterialPageRoute(builder: (context) => PhotoViewPage(image.url)));
+            showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  ImageProvider imageProvider;
+                  if (image.url.startsWith("/")) {
+                    imageProvider = AssetImage(image.url);
+                  } else {
+                    imageProvider = NetworkImage(image.url);
+                  }
+                  return Container(
+                    child: PhotoView(imageProvider: imageProvider),
+                  );
+                });
+          },
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              maxWidth: 100,
+              maxHeight: 100,
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(5),
+              child: image.url.startsWith("/")
+                  ? Image.file(File(image.url))
+                  : CachedNetworkImage(
+                      imageUrl: image.url,
+                      progressIndicatorBuilder:
+                          (context, url, downloadProgress) {
+                        return Container(
+                          margin: EdgeInsets.all(5),
+                          child: CircularProgressIndicator(
+                              value: downloadProgress.progress),
+                        );
+                      },
+                      errorWidget: (context, url, error) => Icon(Icons.error),
+                    ),
+            ),
           ),
         );
-
         break;
       default:
     }
