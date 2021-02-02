@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:ffi';
 import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:fim/page/photo_view_page.dart';
 import 'package:fim/service/chat_service.dart';
 import 'package:fim/service/preferences.dart';
 import 'package:fim/service/recent_contact_service.dart';
@@ -15,6 +14,7 @@ import 'package:fim/pb/logic.ext.pb.dart';
 import 'package:fim/net/api.dart';
 import 'package:fim/theme/color.dart';
 import 'package:fim/theme/size.dart';
+import 'package:fim/util/logger.dart';
 import 'package:fixnum/fixnum.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -46,7 +46,7 @@ class _ChatPageState extends State<ChatPage> {
   @override
   void initState() {
     super.initState();
-    print("chatBody initState");
+    logger.i("chatBody initState");
 
     // 初始化聊天数据
     future = chatService.init(
@@ -136,7 +136,7 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   Widget buildBody(BuildContext context) {
-    print("chat_page build");
+    logger.i("chat_page build");
     return Container(
       child: Column(
         children: <Widget>[
@@ -238,7 +238,7 @@ class _ChatPageState extends State<ChatPage> {
                 builder: (BuildContext context) {
                   ImageProvider imageProvider;
                   if (image.url.startsWith("/")) {
-                    imageProvider = AssetImage(image.url);
+                    imageProvider = FileImage(File(image.url));
                   } else {
                     imageProvider = NetworkImage(image.url);
                   }
@@ -279,7 +279,6 @@ class _ChatPageState extends State<ChatPage> {
       margin: EdgeInsets.only(top: 10, bottom: 10, left: 10, right: 10),
       child: LayoutBuilder(
         builder: (context, constraints) {
-          print("constraints ${constraints.maxWidth}");
           return Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment:
@@ -371,7 +370,6 @@ class _ChatPageState extends State<ChatPage> {
                   minLines: 1,
                   autofocus: false,
                   onChanged: (value) {
-                    print(value);
                     if (preInputText != "" && _editingController.text == "") {
                       setState(() {});
                     }
@@ -461,7 +459,7 @@ class _ChatPageState extends State<ChatPage> {
     if (_scrollController.position.pixels ==
         _scrollController.position.maxScrollExtent) {
       //如果不是最后一页数据，则生成新的数据添加到list里面
-      print("loadMore");
+      logger.i("loadMore");
 
       chatService.loadMore(widget.objectType.toInt(), widget.objectId.toInt());
     }
@@ -471,7 +469,6 @@ class _ChatPageState extends State<ChatPage> {
     final pickedFile = await _picker.getImage(source: source);
     if (pickedFile == null) return;
 
-    print("pickedFile:${pickedFile.path}");
 
     var content = pb.Image();
     content.url = pickedFile.path;
@@ -480,9 +477,11 @@ class _ChatPageState extends State<ChatPage> {
 
   void sendTextMessage() {
     var text = _editingController.text.trim();
+    logger.i("sendTextMessage:$text");
     if (text.length == 0) {
       return;
     }
+
 
     var textContent = pb.Text();
     textContent.text = text;

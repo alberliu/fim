@@ -82,7 +82,6 @@ class Message {
     // 处理系统消息
     if (sender.senderType == pb.SenderType.ST_SYSTEM) {
       var command = pb.Command.fromBuffer(message.messageContent);
-      print(command);
       objectType = objectTypeSystem;
       objectId = command.code;
       messageType = message.messageType.value;

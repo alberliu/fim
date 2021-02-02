@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fim/page/set_user_page.dart';
 import 'package:fim/page/sign_in_page.dart';
 import 'package:fim/theme/color.dart';
+import 'package:fim/util/logger.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fim/service/preferences.dart';
@@ -9,7 +10,7 @@ import 'package:fim/service/preferences.dart';
 class MyPage extends StatefulWidget {
   @override
   _MyPageState createState() {
-    print("my_page createState");
+    logger.i("my_page createState");
     return _MyPageState();
   }
 }
@@ -18,12 +19,12 @@ class _MyPageState extends State<MyPage> {
   @override
   void initState() {
     super.initState();
-    print("my_page initState");
+    logger.i("my_page initState");
   }
 
   @override
   Widget build(BuildContext context) {
-    print("my_page build");
+    logger.i("my_page build");
     return Container(
       color: backgroundColor,
       child: Column(

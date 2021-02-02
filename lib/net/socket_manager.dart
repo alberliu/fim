@@ -15,6 +15,7 @@ import 'package:fim/notification/notification.dart';
 import 'package:fim/pb/conn.ext.pb.dart' as pb;
 import 'package:fim/model/message.dart' as model;
 import 'package:fim/pb/push.ext.pb.dart';
+import 'package:fim/util/logger.dart';
 import 'package:fixnum/fixnum.dart';
 import 'package:protobuf/protobuf.dart';
 
@@ -25,7 +26,7 @@ class SocketManager {
 
   void connect(String host, int port) async {
     await Socket.connect(host, port, timeout: Duration(seconds: 2)).then((s) {
-      print("连接成功");
+      logger.i("连接成功");
 
       socket = s;
       socket.listen(onData,
@@ -41,7 +42,7 @@ class SocketManager {
     var buffer = encode(pb.PackageType.PT_SIGN_IN, input);
     socket.add(buffer);
     await socket.flush();
-    print("长连接登录");
+    logger.i("长连接登录");
 
     Future.delayed(Duration(seconds: 5), () {
       socket.add(encode(pb.PackageType.PT_HEARTBEAT, null));
@@ -50,7 +51,7 @@ class SocketManager {
   }
 
   void onData(Uint8List list) {
-    print("onData");
+    logger.i("onData");
     readBuffer.addAll(list);
 
     if (readBuffer.length < headerLen) {
@@ -65,31 +66,31 @@ class SocketManager {
     var body = readBuffer.getRange(0, bodyLength).toList();
     readBuffer.removeRange(0, bodyLength);
     var output = pb.Output.fromBuffer(body);
-    print(output);
+    logger.i(output);
 
     switch (output.type) {
       case pb.PackageType.PT_SIGN_IN:
         if (output.code != 0) {
-          print("signIn error code:${output.code};message:${output.message}");
+          logger.i("signIn error code:${output.code};message:${output.message}");
           return;
         }
-        print("登录成功");
+        logger.i("登录成功");
         // 触发消息同步
         var input = pb.SyncInput();
         input.seq = getMaxSYN();
-        print("触发消息同步，seq:${input.seq}");
+        logger.i("触发消息同步，seq:${input.seq}");
         socket.add(encode(pb.PackageType.PT_SYNC, input));
         socket.flush();
 
         // 触发定时心跳
         Timer.periodic(Duration(minutes: 4, seconds: 30), (timer) {
-          print("heartbeat input");
+          logger.i("heartbeat input");
           socket.add(encode(pb.PackageType.PT_HEARTBEAT, null));
           socket.flush();
         });
         break;
       case pb.PackageType.PT_SYNC:
-        print("sync");
+        logger.i("sync");
         var syncOutput = pb.SyncOutput.fromBuffer(output.data);
         if (syncOutput.messages.length <= 0) {
           return;
@@ -108,10 +109,10 @@ class SocketManager {
         }
         break;
       case pb.PackageType.PT_HEARTBEAT:
-        print("heartbeat output");
+        logger.i("heartbeat output");
         break;
       case pb.PackageType.PT_MESSAGE:
-        print("message");
+        logger.i("message");
         var messageSend = pb.MessageSend.fromBuffer(output.data);
         messageACK(output.requestId, messageSend.message.seq);
 
@@ -122,12 +123,12 @@ class SocketManager {
 
   void onError(error, StackTrace trace) {
     socket.close();
-    print("捕获socket异常信息：error=$error，trace=${trace.toString()}");
+    logger.i("捕获socket异常信息：error=$error，trace=${trace.toString()}");
   }
 
   void doneHandler() {
     socket.destroy();
-    print("socket关闭处理");
+    logger.i("socket关闭处理");
   }
 
   Uint8List encode(pb.PackageType type, GeneratedMessage message,
@@ -162,9 +163,9 @@ class SocketManager {
   }
 
   handleMessage(pb.Message msg) async {
-    print("handleMessage");
+    logger.i("handleMessage");
     var message = model.Message.fromPB(msg, getUserId());
-    print(message.toMap());
+    logger.i(message.toMap());
 
     // 好友消息
     if (message.objectType == model.Message.objectTypeUser) {
@@ -195,11 +196,11 @@ class SocketManager {
       if (msg.sender.senderType == pb.SenderType.ST_SYSTEM) {
         if (message.messageType != pb.MessageType.MT_COMMAND.value) return;
         var command = pb.Command.fromBuffer(message.messageContent);
-        print("command from net ${command.code}");
+        logger.i("command from net ${command.code}");
         // 处理群组信息变更
         if (command.code == PushCode.PC_UPDATE_GROUP.value) {
           var updateGroupPush = UpdateGroupPush.fromBuffer(command.data);
-          print("command from net $updateGroupPush");
+          logger.i("command from net $updateGroupPush");
           await RecentContactDao.updateInfo(
             model.Message.objectTypeGroup,
             message.objectId,
@@ -223,7 +224,7 @@ class SocketManager {
       // 添加好友
       if (message.objectId == PushCode.PC_ADD_FRIEND.value) {
         var addFriendPush = AddFriendPush.fromBuffer(command.data);
-        print("添加好友:$addFriendPush");
+        logger.i("添加好友:$addFriendPush");
         var newFriend = NewFriend(
           userId: addFriendPush.friendId.toInt(),
           nickname: addFriendPush.nickname,

@@ -1,5 +1,6 @@
 import 'package:fim/dao/new_friend_dao.dart';
 import 'package:fim/model/new_friend.dart';
+import 'package:fim/util/logger.dart';
 import 'package:flutter/cupertino.dart';
 
 var newFriendService = NewFriendService();
@@ -9,7 +10,7 @@ class NewFriendService with ChangeNotifier {
   List<NewFriend> list;
 
   initUnread() async {
-    print("initUnread");
+    logger.i("initUnread");
     unreadNum = await NewFriendDao.getUnreadNum();
   }
 

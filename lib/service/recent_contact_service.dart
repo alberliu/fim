@@ -1,5 +1,6 @@
 import 'package:fim/dao/recent_contact_dao.dart';
 import 'package:fim/model/recent_contact.dart';
+import 'package:fim/util/logger.dart';
 import 'package:flutter/cupertino.dart';
 
 var recentContactService = RecentContactService();
@@ -9,7 +10,7 @@ class RecentContactService with ChangeNotifier {
   int unReadNum;
 
   init() async {
-    print("recentContactService init");
+    logger.i("recentContactService init");
     contacts = await RecentContactDao.list();
     unReadNum = getUnreadNum();
   }
@@ -28,7 +29,7 @@ class RecentContactService with ChangeNotifier {
     for (var contact in contacts) {
       if (contact.objectType == event.objectType &&
           contact.objectId == event.objectId) {
-        print("contact_event_update ${event.unread}");
+        logger.i("contact_event_update ${event.unread}");
         contact.name = event.name;
         contact.avatarUrl = event.avatarUrl;
         contact.lastTime = event.lastTime;
@@ -40,7 +41,7 @@ class RecentContactService with ChangeNotifier {
       }
     }
     if (!has) {
-      print("contact_event_insert");
+      logger.i("contact_event_insert");
       contacts.insert(0, event);
     }
     unReadNum = getUnreadNum();

@@ -1,3 +1,4 @@
+import 'package:fim/util/logger.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -19,7 +20,7 @@ void initNotification() async {
 }
 
 Future selectNotification(String payload) async {
-  print("selectNotification");
+  logger.i("selectNotification");
   if (payload != null) {
     debugPrint('notification payload: $payload');
   }

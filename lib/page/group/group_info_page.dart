@@ -13,6 +13,7 @@ import 'package:fim/pb/logic.ext.pbgrpc.dart';
 import 'package:fim/theme/color.dart';
 import 'package:fim/theme/size.dart';
 import 'package:fim/util/loading_dialog.dart';
+import 'package:fim/util/logger.dart';
 import 'package:fim/util/toast.dart';
 import 'package:fim/widget/commit_button.dart';
 import 'package:fim/widget/edit_image.dart';
@@ -47,7 +48,7 @@ class _GroupInfoPageState extends State<GroupInfoPage> {
   }
 
   initData() async {
-    print("group info init_data ${widget.groupId}");
+    logger.i("group info init_data ${widget.groupId}");
     var membersReq = GetGroupMembersReq();
     membersReq.groupId = widget.groupId;
     var membersResp =
@@ -178,7 +179,7 @@ class _GroupInfoPageState extends State<GroupInfoPage> {
     showLoadingDialog(context, "正在提交，请稍后");
     String avatarUrl = group.avatarUrl;
     if (file != null) {
-      print("upload file");
+      logger.i("upload file");
       var formData = FormData.fromMap({
         "file": await MultipartFile.fromFile(file.path, filename: "avatar.png"),
       });

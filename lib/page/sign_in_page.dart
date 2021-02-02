@@ -6,6 +6,7 @@ import 'package:fim/page/set_user_page.dart';
 import 'package:fim/net/api.dart';
 import 'package:fim/theme/color.dart';
 import 'package:fim/theme/size.dart';
+import 'package:fim/util/logger.dart';
 import 'package:fim/util/toast.dart';
 import 'package:fixnum/fixnum.dart';
 import 'package:flutter/cupertino.dart';
@@ -118,15 +119,14 @@ class SignInPage extends StatelessWidget {
     request.code = code;
     var prefs = await SharedPreferences.getInstance();
     var deviceId = prefs.getInt(deviceIdKey);
-    print("sign_in_page device_id:$deviceId");
+    logger.i("sign_in_page device_id:$deviceId");
     request.deviceId = Int64(deviceId);
 
     SignInResp signInResp;
     try {
       signInResp = await businessClient.signIn(request);
-      print(signInResp.toString());
     } catch (e) {
-      print(e);
+      logger.i(e);
       toast("登录失败");
       return;
     }

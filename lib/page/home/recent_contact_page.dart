@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fim/service/recent_contact_service.dart';
+import 'package:fim/util/logger.dart';
 import 'package:flutter/foundation.dart';
 import 'package:provider/provider.dart';
 import 'package:fim/model/recent_contact.dart';
@@ -18,7 +19,7 @@ class RecentContactPage extends StatefulWidget {
 class _RecentContactPageState extends State<RecentContactPage> {
   @override
   Widget build(BuildContext context) {
-    print("RecentContactPage build");
+    logger.i("RecentContactPage build");
     return Container(
       child: ListView.separated(
         separatorBuilder: (BuildContext context, int index) {

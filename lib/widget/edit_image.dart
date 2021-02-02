@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:fim/util/logger.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_cropper/image_cropper.dart';
@@ -43,7 +44,7 @@ class _EditImageState extends State<EditImage> {
                   child: widget.image,
                 ),
                 onTap: () {
-                  print("我想替换图片");
+                  logger.i("我想替换图片");
                   _getImage();
                 },
               ),
@@ -66,7 +67,7 @@ class _EditImageState extends State<EditImage> {
         widget.onPicked(file);
       }
     } else {
-      print('No image selected.');
+      logger.i('No image selected.');
     }
   }
 

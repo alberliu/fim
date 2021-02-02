@@ -9,6 +9,7 @@ import 'package:fim/net/api.dart';
 import 'package:fim/pb/logic.ext.pb.dart';
 import 'package:fim/theme/color.dart';
 import 'package:fim/theme/size.dart';
+import 'package:fim/util/logger.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fixnum/fixnum.dart';
@@ -29,7 +30,7 @@ class _CreateGroupPageState extends State<CreateGroupPage> {
     for (var user in friendService.friendList) {
       users.add(CheckUser(user, false));
     }
-    print("users:${users.length}");
+    logger.i("users:${users.length}");
   }
 
   @override

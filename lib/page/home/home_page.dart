@@ -7,6 +7,7 @@ import 'package:fim/page/home/recent_contact_page.dart';
 import 'package:fim/page/friend/search_user_page.dart';
 import 'package:fim/theme/color.dart';
 import 'package:fim/theme/size.dart';
+import 'package:fim/util/logger.dart';
 import 'package:fim/widget/my_bottom_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -30,7 +31,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    print("home_page initState");
+    logger.i("home_page initState");
   }
 
   @override
@@ -127,7 +128,7 @@ class _HomePageState extends State<HomePage> {
         ];
       },
       onCanceled: () {
-        print('onCanceled');
+        logger.i('onCanceled');
       },
       icon: Icon(Icons.more_horiz),
       color: Colors.black45,

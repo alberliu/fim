@@ -11,6 +11,7 @@ import 'package:fim/pb/logic.ext.pb.dart';
 import 'package:fim/net/api.dart';
 import 'package:fim/net/socket_manager.dart';
 import 'package:fim/page/sign_in_page.dart';
+import 'package:fim/util/logger.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -41,7 +42,7 @@ class InitPage extends StatelessWidget {
 
     // 检查设备id
     var deviceId = sharedPreferences.getInt(deviceIdKey);
-    print("init_page_device_id:$deviceId");
+    logger.i("init_page_device_id:$deviceId");
     if (deviceId == null) {
       var deviceInfo = DeviceInfoPlugin();
       var androidInfo = await deviceInfo.androidInfo;
@@ -56,14 +57,14 @@ class InitPage extends StatelessWidget {
       var response = await logicClient.registerDevice(request);
       var newDeviceId = response.deviceId.toInt();
       await sharedPreferences.setInt(deviceIdKey, newDeviceId);
-      print("init_page set devoce_id = $newDeviceId");
+      logger.i("init_page set devoce_id = $newDeviceId");
     }
 
     // 检查是否登录
     var userId = sharedPreferences.getInt(userIdKey);
     var token = sharedPreferences.getString(tokenKey);
     if (userId == null || token == null) {
-      print("用户尚未登录,跳转至登录页面");
+      logger.i("用户尚未登录,跳转至登录页面");
       Navigator.pushReplacement(
           context, MaterialPageRoute(builder: (context) => SignInPage()));
       return;
@@ -89,7 +90,7 @@ class InitPage extends StatelessWidget {
     // 长连接登录
     await SocketManager().connect(baseUrl, 8080);
 
-    print("跳转至主页");
+    logger.i("跳转至主页");
     Navigator.pushReplacement(
         context, MaterialPageRoute(builder: (context) => HomePage()));
   }

@@ -1,5 +1,6 @@
 import 'package:fim/service/preferences.dart';
 import 'package:fim/model/new_friend.dart';
+import 'package:fim/util/logger.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -10,7 +11,7 @@ class NewFriendDao {
     database = await openDatabase(
       join(await getDatabasesPath(), getUserId().toString() + '/new_friend.db'),
       onCreate: (db, version) {
-        print("创建数据库 new_friend");
+        logger.i("创建数据库 new_friend");
         return _onCreate(db, version);
       },
       version: 1,

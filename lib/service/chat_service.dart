@@ -3,6 +3,7 @@ import 'package:fim/pb/conn.ext.pb.dart' as pb;
 import 'package:fim/pb/conn.ext.pbenum.dart';
 import 'package:fim/pb/push.ext.pb.dart';
 import 'package:fim/pb/push.ext.pbenum.dart';
+import 'package:fim/util/logger.dart';
 import 'package:fixnum/fixnum.dart';
 import 'package:fim/model/message.dart';
 import 'package:flutter/cupertino.dart';
@@ -75,7 +76,7 @@ class ChatService with ChangeNotifier {
     // 指令消息
     if (event.messageType == MessageType.MT_COMMAND.value) {
       var command = pb.Command.fromBuffer(event.messageContent);
-      print("指令消息：${command.code}");
+      logger.i("指令消息：${command.code}");
       // 群组信息更新
       if (command.code == PushCode.PC_UPDATE_GROUP.value) {
         var updateGroupPush = UpdateGroupPush.fromBuffer(command.data);

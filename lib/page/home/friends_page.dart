@@ -5,6 +5,7 @@ import 'package:fim/page/group/groups_page.dart';
 import 'package:fim/page/chat/chat_page.dart';
 import 'package:fim/service/new_friend_service.dart';
 import 'package:fim/theme/color.dart';
+import 'package:fim/util/logger.dart';
 import 'package:fim/widget/list_item.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -15,7 +16,7 @@ import 'package:provider/provider.dart';
 class FriendsPage extends StatefulWidget {
   @override
   _FriendsPageState createState() {
-    print("friend_page createState");
+    logger.i("friend_page createState");
     return _FriendsPageState();
   }
 }
@@ -24,12 +25,12 @@ class _FriendsPageState extends State<FriendsPage> {
   @override
   void initState() {
     super.initState();
-    print("friend_page initState");
+    logger.i("friend_page initState");
   }
 
   @override
   Widget build(BuildContext context) {
-    print("friend_page build");
+    logger.i("friend_page build");
     return Container(
       child: Column(
         children: [

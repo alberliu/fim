@@ -1,5 +1,6 @@
 import 'package:fim/service/preferences.dart';
 import 'package:fim/model/message.dart';
+import 'package:fim/util/logger.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -10,7 +11,7 @@ class MessageDao {
     database = await openDatabase(
       join(await getDatabasesPath(),getUserId().toString()+ '/message.db'),
       onCreate: (db, version) {
-        print("创建数据库 message");
+        logger.i("创建数据库 message");
         return _onCreate(db, version);
       },
       version: 1,

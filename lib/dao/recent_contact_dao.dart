@@ -1,5 +1,6 @@
 import 'package:fim/service/preferences.dart';
 import 'package:fim/model/recent_contact.dart';
+import 'package:fim/util/logger.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -11,7 +12,7 @@ class RecentContactDao {
       join(await getDatabasesPath(),
           getUserId().toString() + '/recent_contact.db'),
       onCreate: (db, version) {
-        print("创建数据库 recent_contact");
+        logger.i("创建数据库 recent_contact");
         return _onCreate(db, version);
       },
       version: 1,

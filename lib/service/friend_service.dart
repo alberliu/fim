@@ -1,6 +1,7 @@
 import 'package:fim/service/preferences.dart';
 import 'package:fim/net/api.dart';
 import 'package:fim/pb/logic.ext.pb.dart';
+import 'package:fim/util/logger.dart';
 import 'package:fixnum/fixnum.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -11,7 +12,7 @@ class FriendService with ChangeNotifier {
   Map<Int64, Friend> friendMap;
 
   init() async {
-    print("friendService init");
+    logger.i("friendService init");
     var response =
         await logicClient.getFriends(GetFriendsReq(), options: getOptions());
 
