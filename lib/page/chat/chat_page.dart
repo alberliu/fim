@@ -469,7 +469,6 @@ class _ChatPageState extends State<ChatPage> {
     final pickedFile = await _picker.getImage(source: source);
     if (pickedFile == null) return;
 
-
     var content = pb.Image();
     content.url = pickedFile.path;
     sendMessage(pb.MessageType.MT_IMAGE, content);
@@ -481,7 +480,6 @@ class _ChatPageState extends State<ChatPage> {
     if (text.length == 0) {
       return;
     }
-
 
     var textContent = pb.Text();
     textContent.text = text;
