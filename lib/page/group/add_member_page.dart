@@ -146,7 +146,7 @@ class _AddMemberState extends State<AddMemberPage> {
         widget.members.add(member);
       }
     }
-    await logicClient.addGroupMembers(req, options: getOptions());
+    await logicClient.addGroupMembers(req);
 
     toast("添加成功");
     // 进入到聊天页面

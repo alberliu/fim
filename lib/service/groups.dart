@@ -11,7 +11,7 @@ class Groups {
     if (group == null) {
       var request = GetGroupReq();
       request.groupId = groupId;
-      var response = await logicClient.getGroup(request, options: getOptions());
+      var response = await logicClient.getGroup(request);
       group = response.group;
       _groupMap[groupId] = group;
     }

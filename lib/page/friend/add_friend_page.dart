@@ -43,7 +43,8 @@ class _AddFriendPageState extends State<AddFriendPage> {
                   children: <Widget>[
                     ClipRRect(
                       borderRadius: BorderRadius.circular(10),
-                      child: CachedNetworkImage(imageUrl:this.widget.user.avatarUrl),
+                      child: CachedNetworkImage(
+                          imageUrl: this.widget.user.avatarUrl),
                     ),
                     Container(
                       margin: EdgeInsets.only(left: 20.0),
@@ -139,7 +140,7 @@ class _AddFriendPageState extends State<AddFriendPage> {
     request.friendId = this.widget.user.userId;
     request.remarks = remarksController.text;
     request.description = descriptionController.text;
-    await logicClient.addFriend(request, options: getOptions());
+    await logicClient.addFriend(request);
 
     toast("请求已成功发送");
     Navigator.pop(context);

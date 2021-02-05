@@ -1,4 +1,6 @@
+import 'dart:async';
 import 'dart:io';
+import 'package:fim/page/sign_in_page.dart';
 import 'package:fim/service/chat_service.dart';
 import 'package:fim/service/friend_service.dart';
 import 'package:fim/service/new_friend_service.dart';
@@ -6,28 +8,39 @@ import 'package:fim/service/recent_contact_service.dart';
 import 'package:fim/page/chat/chat_page.dart';
 import 'package:fim/page/init_page.dart';
 import 'package:fim/theme/color.dart';
+import 'package:fim/util/logger.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
+GlobalKey<NavigatorState> navigatorKey = GlobalKey();
+
 void main() {
+  FlutterError.onError = (FlutterErrorDetails details) {
+    logger.e("exception ${details.exception}");
+  };
+
   if (Platform.isAndroid) {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
       statusBarColor: backgroundColor,
     ));
   }
 
-  runApp(
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => recentContactService),
-        ChangeNotifierProvider(create: (_) => friendService),
-        ChangeNotifierProvider(create: (_) => newFriendService),
-        ChangeNotifierProvider(create: (_) => chatService),
-      ],
-      child: App(),
-    ),
-  );
+  runZoned<Future<Null>>(() async {
+    runApp(
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider(create: (_) => recentContactService),
+          ChangeNotifierProvider(create: (_) => friendService),
+          ChangeNotifierProvider(create: (_) => newFriendService),
+          ChangeNotifierProvider(create: (_) => chatService),
+        ],
+        child: App(),
+      ),
+    );
+  }, onError: (error, stackTrace) async {
+    logger.e("exception $error");
+  });
 }
 
 class App extends StatelessWidget {
@@ -52,8 +65,10 @@ class App extends StatelessWidget {
       ),
       home: (InitPage()),
       routes: {
+        '/signIn': (context) => SignInPage(),
         '/chatPage': (context) => ChatPage(),
       },
+      navigatorKey: navigatorKey,
     );
   }
 }

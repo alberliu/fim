@@ -147,7 +147,7 @@ class _FriendPageState extends State<FriendPage> {
     req.friendId = widget.friend.userId;
     req.remarks = editingController.text;
 
-    await logicClient.setFriend(req, options: getOptions());
+    await logicClient.setFriend(req);
     widget.friend.remarks = editingController.text;
     friendService.changed();
 

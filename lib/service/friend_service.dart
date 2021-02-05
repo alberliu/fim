@@ -13,10 +13,12 @@ class FriendService with ChangeNotifier {
 
   init() async {
     logger.i("friendService init");
-    var response =
-        await logicClient.getFriends(GetFriendsReq(), options: getOptions());
 
-    friendList = response.friends;
+    GetFriendsResp resp;
+
+    resp = await logicClient.getFriends(GetFriendsReq());
+
+    friendList = resp.friends;
 
     friendMap = Map();
     for (var friend in friendList) {

@@ -20,17 +20,42 @@ import 'package:fixnum/fixnum.dart';
 import 'package:protobuf/protobuf.dart';
 
 class SocketManager {
+  static String serverUrl;
+  static int serverPort;
+
   static const headerLen = 2;
   static Socket socket;
   static List<int> readBuffer = List<int>();
 
-  void connect(String host, int port) async {
-    await Socket.connect(host, port, timeout: Duration(seconds: 2)).then((s) {
+  static Timer heartTimer;
+
+  static connect() async {
+    logger.i("开始连接");
+    // 资源释放
+    if (heartTimer != null && heartTimer.isActive == true) heartTimer.cancel();
+    readBuffer = List<int>();
+
+    while (true) {
+      logger.i("尝试连接");
+      try {
+        await connectServer();
+      } catch (e) {
+        logger.i("连接失败 $e");
+        // 连接失败，5秒之后重试
+        sleep(Duration(seconds: 5));
+        continue;
+      }
+      logger.i("停止重试");
+      break;
+    }
+  }
+
+  static connectServer() async {
+    await Socket.connect(serverUrl, serverPort, timeout: Duration(seconds: 2)).then((s) {
       logger.i("连接成功");
 
       socket = s;
-      socket.listen(onData,
-          onError: onError, onDone: doneHandler, cancelOnError: true);
+      socket.listen(onData, onError: onError, onDone: doneHandler, cancelOnError: true);
     });
 
     // 长连接登录
@@ -38,19 +63,25 @@ class SocketManager {
     input.deviceId = getDeviceId();
     input.userId = getUserId();
     input.token = getToken();
-
     var buffer = encode(pb.PackageType.PT_SIGN_IN, input);
     socket.add(buffer);
-    await socket.flush();
+    socket.flush();
     logger.i("长连接登录");
-
-    Future.delayed(Duration(seconds: 5), () {
-      socket.add(encode(pb.PackageType.PT_HEARTBEAT, null));
-      socket.flush();
-    });
   }
 
-  void onData(Uint8List list) {
+  static void onError(error, StackTrace trace) {
+    socket.close();
+    logger.i("捕获socket异常信息：error=$error，trace=${trace.toString()}");
+    connect();
+  }
+
+  static void doneHandler() {
+    socket.destroy();
+    logger.i("socket关闭处理");
+    connect();
+  }
+
+  static void onData(Uint8List list) {
     logger.i("onData");
     readBuffer.addAll(list);
 
@@ -83,7 +114,7 @@ class SocketManager {
         socket.flush();
 
         // 触发定时心跳
-        Timer.periodic(Duration(minutes: 4, seconds: 30), (timer) {
+        heartTimer = Timer.periodic(Duration(minutes: 4, seconds: 30), (timer) {
           logger.i("heartbeat input");
           socket.add(encode(pb.PackageType.PT_HEARTBEAT, null));
           socket.flush();
@@ -121,18 +152,7 @@ class SocketManager {
     }
   }
 
-  void onError(error, StackTrace trace) {
-    socket.close();
-    logger.i("捕获socket异常信息：error=$error，trace=${trace.toString()}");
-  }
-
-  void doneHandler() {
-    socket.destroy();
-    logger.i("socket关闭处理");
-  }
-
-  Uint8List encode(pb.PackageType type, GeneratedMessage message,
-      [Int64 requestId]) {
+  static Uint8List encode(pb.PackageType type, GeneratedMessage message, [Int64 requestId]) {
     // 构建输入流
     var input = pb.Input();
     input.type = type;
@@ -155,14 +175,14 @@ class SocketManager {
     return Uint8List.fromList(writeBuffer);
   }
 
-  void messageACK(Int64 requestId, Int64 seq) {
+  static void messageACK(Int64 requestId, Int64 seq) {
     var ack = pb.MessageACK();
     ack.deviceAck = seq;
     ack.receiveTime = Int64(DateTime.now().millisecondsSinceEpoch);
     socket.add(encode(pb.PackageType.PT_MESSAGE, ack, requestId));
   }
 
-  handleMessage(pb.Message msg) async {
+  static handleMessage(pb.Message msg) async {
     logger.i("handleMessage");
     var message = model.Message.fromPB(msg, getUserId());
     logger.i(message.toMap());

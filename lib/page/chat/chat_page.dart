@@ -18,6 +18,7 @@ import 'package:fim/util/logger.dart';
 import 'package:fixnum/fixnum.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:protobuf/protobuf.dart';
 import 'package:provider/provider.dart';
@@ -29,8 +30,7 @@ class ChatPage extends StatefulWidget {
   Int64 objectId;
   String name;
 
-  ChatPage({Key key, this.objectType, this.objectId, this.name})
-      : super(key: key);
+  ChatPage({Key key, this.objectType, this.objectId, this.name}) : super(key: key);
 
   @override
   _ChatPageState createState() => _ChatPageState();
@@ -49,16 +49,14 @@ class _ChatPageState extends State<ChatPage> {
     logger.i("chatBody initState");
 
     // 初始化聊天数据
-    future = chatService.init(
-        widget.objectType.toInt(), widget.objectId.toInt(), widget.name);
+    future = chatService.init(widget.objectType.toInt(), widget.objectId.toInt(), widget.name);
 
     // 添加下拉加载更多聊天数据
     _scrollController.addListener(loadMore);
 
     // 标记用户信息已读
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      recentContactService.readMessage(
-          widget.objectType.toInt(), widget.objectId.toInt());
+      recentContactService.readMessage(widget.objectType.toInt(), widget.objectId.toInt());
     });
   }
 
@@ -94,10 +92,7 @@ class _ChatPageState extends State<ChatPage> {
   AppBar buildAppBar(BuildContext context) {
     return AppBar(
       toolbarHeight: appBarHeight,
-      title: Text(context
-          .watch<ChatService>()
-          .getChatData(widget.objectType.toInt(), widget.objectId.toInt())
-          .name),
+      title: Text(context.watch<ChatService>().getChatData(widget.objectType.toInt(), widget.objectId.toInt()).name),
       centerTitle: true,
       actions: <Widget>[
         // 非隐藏的菜单
@@ -119,8 +114,7 @@ class _ChatPageState extends State<ChatPage> {
               changeName = await Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => GroupInfoPage(
-                      groupId: widget.objectId, name: widget.name),
+                  builder: (context) => GroupInfoPage(groupId: widget.objectId, name: widget.name),
                 ),
               );
             }
@@ -152,10 +146,8 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   Widget buildMessageListWidget(BuildContext context) {
-    var messages = context
-        .watch<ChatService>()
-        .getChatData(widget.objectType.toInt(), widget.objectId.toInt())
-        .messages;
+    var messages =
+        context.watch<ChatService>().getChatData(widget.objectType.toInt(), widget.objectId.toInt()).messages;
     return Container(
       color: Colors.grey[200],
       child: Scrollbar(
@@ -258,12 +250,10 @@ class _ChatPageState extends State<ChatPage> {
                   ? Image.file(File(image.url))
                   : CachedNetworkImage(
                       imageUrl: image.url,
-                      progressIndicatorBuilder:
-                          (context, url, downloadProgress) {
+                      progressIndicatorBuilder: (context, url, downloadProgress) {
                         return Container(
                           margin: EdgeInsets.all(5),
-                          child: CircularProgressIndicator(
-                              value: downloadProgress.progress),
+                          child: CircularProgressIndicator(value: downloadProgress.progress),
                         );
                       },
                       errorWidget: (context, url, error) => Icon(Icons.error),
@@ -281,8 +271,7 @@ class _ChatPageState extends State<ChatPage> {
         builder: (context, constraints) {
           return Row(
             crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment:
-                isMyMessage ? MainAxisAlignment.end : MainAxisAlignment.start,
+            mainAxisAlignment: isMyMessage ? MainAxisAlignment.end : MainAxisAlignment.start,
             children: <Widget>[
               // 对方头像区域
               isMyMessage
@@ -294,9 +283,7 @@ class _ChatPageState extends State<ChatPage> {
                       margin: EdgeInsets.only(right: 10),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(5),
-                        child: CachedNetworkImage(
-                            imageUrl: message.senderAvatarUrl,
-                            fit: BoxFit.cover),
+                        child: CachedNetworkImage(imageUrl: message.senderAvatarUrl, fit: BoxFit.cover),
                       ),
                     ),
 
@@ -338,8 +325,7 @@ class _ChatPageState extends State<ChatPage> {
                       margin: EdgeInsets.only(left: 10),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(5),
-                        child: CachedNetworkImage(
-                            imageUrl: getAvatarUrl(), fit: BoxFit.fill),
+                        child: CachedNetworkImage(imageUrl: getAvatarUrl(), fit: BoxFit.fill),
                       ),
                     )
                   : Container(),
@@ -456,8 +442,7 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   void loadMore() async {
-    if (_scrollController.position.pixels ==
-        _scrollController.position.maxScrollExtent) {
+    if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
       //如果不是最后一页数据，则生成新的数据添加到list里面
       logger.i("loadMore");
 
@@ -468,7 +453,6 @@ class _ChatPageState extends State<ChatPage> {
   void pickImage(BuildContext context, ImageSource source) async {
     final pickedFile = await _picker.getImage(source: source);
     if (pickedFile == null) return;
-
 
     var content = pb.Image();
     content.url = pickedFile.path;
@@ -481,7 +465,6 @@ class _ChatPageState extends State<ChatPage> {
     if (text.length == 0) {
       return;
     }
-
 
     var textContent = pb.Text();
     textContent.text = text;
@@ -532,8 +515,7 @@ class _ChatPageState extends State<ChatPage> {
     request.messageContent = buffer;
     request.sendTime = now;
     request.isPersist = true;
-    var response =
-        await logicClient.sendMessage(request, options: await getOptions());
+    var response = await logicClient.sendMessage(request);
 
     message.seq = response.seq.toInt();
     message.status = 0;

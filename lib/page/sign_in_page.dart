@@ -136,7 +136,7 @@ class SignInPage extends StatelessWidget {
     await sharedPreferences.setString(phoneNumberKey, number);
 
     var getUserResp =
-        await businessClient.getUser(GetUserReq(), options: getOptions());
+        await businessClient.getUser(GetUserReq());
     await sharedPreferences.setString(nicknameKey, getUserResp.user.nickname);
     await sharedPreferences.setString(avatarUrlKey, getUserResp.user.avatarUrl);
 

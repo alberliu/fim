@@ -106,7 +106,7 @@ class _SetUserPageState extends State<SetUserPage> {
     var req = UpdateUserReq();
     req.nickname = nickname;
     req.avatarUrl = avatarUrl;
-    await businessClient.updateUser(req, options: getOptions());
+    await businessClient.updateUser(req);
 
     await sharedPreferences.setString(nicknameKey, nickname);
     await sharedPreferences.setString(avatarUrlKey, avatarUrl);

@@ -1,10 +1,10 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:logger/logger.dart';
 
 var logger = Logger(
   printer: MyPrinter(),
 );
-
 
 class MyPrinter extends LogPrinter {
   static final levelPrefixes = {
@@ -55,6 +55,6 @@ class MyPrinter extends LogPrinter {
     var str = lines[3].replaceFirst(RegExp(r'#\d+\s+'), '');
     var start = str.indexOf("(");
     var end = str.indexOf(")");
-    return str.substring(start+1,end);
+    return str.substring(start + 1, end);
   }
 }
