@@ -3,6 +3,7 @@ import 'package:fim/pb/business.ext.pbgrpc.dart';
 import 'package:fim/pb/logic.ext.pbgrpc.dart';
 import 'package:fim/service/preferences.dart';
 import 'package:fim/util/logger.dart';
+import 'package:fim/util/toast.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:grpc/grpc.dart';
 
@@ -13,19 +14,23 @@ class MyInterceptor extends ClientInterceptor {
   @override
   ResponseFuture<R> interceptUnary<Q, R>(ClientMethod<Q, R> method, Q request, CallOptions options, invoker) {
     ResponseFuture<R> response;
-
     response = invoker(method, request, getOptions());
-    response.catchError(onError);
-
     logger.i("request method:${method.path} request:$request response:${response}");
     return response;
   }
 
   onError(Object error) {
     if (error is GrpcError) {
-      if (error.code == 10000) {
-        navigatorKey.currentState.pushNamedAndRemoveUntil("/signIn", (Route<dynamic> route) => false);
-        return;
+      switch (error.code) {
+        case 10000:
+          navigatorKey.currentState.pushNamedAndRemoveUntil("/signIn", (Route<dynamic> route) => false);
+          return;
+        case 2:
+          toast("请求失败，请稍后再试");
+          return;
+        case 14:
+          toast("请求失败，请稍后再试");
+          return;
       }
     }
   }

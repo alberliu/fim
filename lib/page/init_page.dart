@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:device_info/device_info.dart';
 import 'package:fim/dao/message_dao.dart';
 import 'package:fim/dao/new_friend_dao.dart';

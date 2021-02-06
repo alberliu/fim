@@ -18,7 +18,6 @@ import 'package:fim/util/logger.dart';
 import 'package:fixnum/fixnum.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:protobuf/protobuf.dart';
 import 'package:provider/provider.dart';
@@ -515,9 +514,12 @@ class _ChatPageState extends State<ChatPage> {
     request.messageContent = buffer;
     request.sendTime = now;
     request.isPersist = true;
-    var response = await logicClient.sendMessage(request);
 
-    message.seq = response.seq.toInt();
+    SendMessageResp resp;
+
+    resp = await logicClient.sendMessage(request);
+
+    message.seq = resp.seq.toInt();
     message.status = 0;
     setState(() {});
     chatService.save(message);

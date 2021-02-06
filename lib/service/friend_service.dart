@@ -8,8 +8,8 @@ import 'package:flutter/cupertino.dart';
 var friendService = FriendService();
 
 class FriendService with ChangeNotifier {
-  List<Friend> friendList;
-  Map<Int64, Friend> friendMap;
+  List<Friend> friendList = [];
+  Map<Int64, Friend> friendMap = {};
 
   init() async {
     logger.i("friendService init");

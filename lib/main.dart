@@ -9,13 +9,15 @@ import 'package:fim/page/chat/chat_page.dart';
 import 'package:fim/page/init_page.dart';
 import 'package:fim/theme/color.dart';
 import 'package:fim/util/logger.dart';
+import 'package:fim/util/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:grpc/grpc.dart';
 import 'package:provider/provider.dart';
 
 GlobalKey<NavigatorState> navigatorKey = GlobalKey();
 
-void main() {
+void main() async {
   FlutterError.onError = (FlutterErrorDetails details) {
     logger.e("exception ${details.exception}");
   };
@@ -38,9 +40,26 @@ void main() {
         child: App(),
       ),
     );
-  }, onError: (error, stackTrace) async {
-    logger.e("exception $error");
-  });
+  }, onError: handleError);
+}
+
+void handleError(error, stackTrace) async {
+  if (error is GrpcError) {
+    logger.d(error);
+    switch (error.code) {
+      case 10000:
+        navigatorKey.currentState.pushNamedAndRemoveUntil("/signIn", (Route<dynamic> route) => false);
+        return;
+      case 2:
+        toast("请求失败，请稍后再试");
+        return;
+      case 14:
+        toast("请求失败，请稍后再试");
+        return;
+    }
+  }
+
+  logger.e("$error $stackTrace");
 }
 
 class App extends StatelessWidget {

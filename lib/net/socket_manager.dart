@@ -35,19 +35,18 @@ class SocketManager {
     if (heartTimer != null && heartTimer.isActive == true) heartTimer.cancel();
     readBuffer = List<int>();
 
-    while (true) {
-      logger.i("尝试连接");
+    var connectTimer = Timer.periodic(Duration(seconds: 5), (timer) async {
       try {
         await connectServer();
       } catch (e) {
         logger.i("连接失败 $e");
         // 连接失败，5秒之后重试
         sleep(Duration(seconds: 5));
-        continue;
+        return;
       }
       logger.i("停止重试");
-      break;
-    }
+      timer.cancel();
+    });
   }
 
   static connectServer() async {
