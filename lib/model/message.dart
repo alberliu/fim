@@ -8,6 +8,10 @@ class Message {
   static const int objectTypeGroup = 2; // 群组
   static const int objectTypeSystem = 3; // 系统
 
+  static const int normalStatus = 0; // 通常
+  static const int sendingStatus = -1; // 发送中
+  static const int sendFailStatus = -2; // 发送失败
+
   int objectType;
   int objectId;
   int senderId;

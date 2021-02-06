@@ -18,6 +18,7 @@ import 'package:fim/util/logger.dart';
 import 'package:fixnum/fixnum.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:grpc/grpc.dart' as grpc;
 import 'package:photo_view/photo_view.dart';
 import 'package:protobuf/protobuf.dart';
 import 'package:provider/provider.dart';
@@ -286,8 +287,8 @@ class _ChatPageState extends State<ChatPage> {
                       ),
                     ),
 
-              // 发送加载
-              message.status == -1
+              // 发送中状态
+              message.status == model.Message.sendingStatus
                   ? Container(
                       padding: EdgeInsets.all(10),
                       alignment: Alignment.centerRight,
@@ -297,6 +298,19 @@ class _ChatPageState extends State<ChatPage> {
                         child: CircularProgressIndicator(
                           valueColor: AlwaysStoppedAnimation(Colors.grey),
                         ),
+                      ),
+                    )
+                  : Container(),
+
+              // 发送失败状态
+              message.status == model.Message.sendFailStatus
+                  ? Container(
+                      padding: EdgeInsets.all(10),
+                      alignment: Alignment.centerRight,
+                      child: SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: Icon(Icons.warning_rounded,color: Colors.red),
                       ),
                     )
                   : Container(),
@@ -489,7 +503,7 @@ class _ChatPageState extends State<ChatPage> {
     message.messageContent = buffer;
     //message.seq = response.seq.toInt();
     message.sendTime = now.toInt();
-    message.status = -1;
+    message.status = model.Message.sendingStatus;
     // 渲染到UI
     chatService.sendMessage(message);
 
@@ -516,14 +530,27 @@ class _ChatPageState extends State<ChatPage> {
     request.isPersist = true;
 
     SendMessageResp resp;
+    try {
+      resp = await logicClient.sendMessage(request);
+    } catch (e) {
+      if (e is grpc.GrpcError) {
+        if (e.code == 10000) {
+          throw e;
+        } else {
+          message.status = model.Message.sendFailStatus;
+          setState(() {});
+          return;
+        }
+      }
+    }
 
-    resp = await logicClient.sendMessage(request);
-
+    // 保存消息
     message.seq = resp.seq.toInt();
-    message.status = 0;
+    message.status = model.Message.normalStatus;
     setState(() {});
     chatService.save(message);
 
+    // 同步到联系人界面
     var contact = await RecentContact.build(message);
     contact.unread = 0;
     recentContactService.onMessage(contact);
