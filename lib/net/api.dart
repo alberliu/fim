@@ -15,24 +15,10 @@ class MyInterceptor extends ClientInterceptor {
   ResponseFuture<R> interceptUnary<Q, R>(ClientMethod<Q, R> method, Q request, CallOptions options, invoker) {
     ResponseFuture<R> response;
     response = invoker(method, request, getOptions());
-    logger.i("request method:${method.path} request:$request response:${response}");
+    response.then((value) {
+      logger.i("request method:${method.path}\nrequest:$request response:$value");
+    });
     return response;
-  }
-
-  onError(Object error) {
-    if (error is GrpcError) {
-      switch (error.code) {
-        case 10000:
-          navigatorKey.currentState.pushNamedAndRemoveUntil("/signIn", (Route<dynamic> route) => false);
-          return;
-        case 2:
-          toast("请求失败，请稍后再试");
-          return;
-        case 14:
-          toast("请求失败，请稍后再试");
-          return;
-      }
-    }
   }
 }
 
