@@ -322,7 +322,6 @@ class _ChatPageState extends State<ChatPage> {
                   LimitedBox(
                     maxWidth: constraints.maxWidth - 100,
                     child: Container(
-                      color: Colors.amber,
                       child: contentWidget,
                     ),
                   ),
