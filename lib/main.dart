@@ -56,6 +56,9 @@ void handleError(error, stackTrace) async {
       case 14:
         toast("请求失败，请稍后再试");
         return;
+      default:
+        toast(error.message);
+        return;
     }
   }
 
