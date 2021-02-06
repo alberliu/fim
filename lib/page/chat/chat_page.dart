@@ -310,7 +310,7 @@ class _ChatPageState extends State<ChatPage> {
                       child: SizedBox(
                         height: 20,
                         width: 20,
-                        child: Icon(Icons.warning_rounded,color: Colors.red),
+                        child: Icon(Icons.warning_rounded, color: Colors.red),
                       ),
                     )
                   : Container(),
