@@ -317,6 +317,7 @@ class _ChatPageState extends State<ChatPage> {
 
               // 消息区域
               Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   nameWidget,
                   LimitedBox(

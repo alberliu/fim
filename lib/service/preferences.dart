@@ -13,15 +13,6 @@ const maxSYNKey = "max_syn";
 
 SharedPreferences sharedPreferences;
 
-CallOptions getOptions() {
-  var metadata = {
-    "device_id": sharedPreferences.getInt(deviceIdKey).toString(),
-    "user_id": sharedPreferences.getInt(userIdKey).toString(),
-    "token": sharedPreferences.getString(tokenKey)
-  };
-  return CallOptions(metadata: metadata);
-}
-
 Int64 getDeviceId() {
   return Int64(sharedPreferences.getInt(deviceIdKey));
 }

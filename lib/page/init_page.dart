@@ -46,9 +46,10 @@ class InitPage extends StatelessWidget {
     var deviceId = sharedPreferences.getInt(deviceIdKey);
     logger.i("init_page_device_id:$deviceId");
     if (deviceId == null) {
+      logger.i("init_page_init_device:$deviceId");
       var deviceInfo = DeviceInfoPlugin();
       var androidInfo = await deviceInfo.androidInfo;
-
+      logger.i("init_page_get_device:$deviceInfo");
       var request = RegisterDeviceReq();
       request.type = 1; // 这里1表示Android
       request.brand = androidInfo.brand; //
@@ -57,6 +58,7 @@ class InitPage extends StatelessWidget {
       request.sdkVersion = "1.0.0";
 
       var response = await logicClient.registerDevice(request);
+      logger.i("init_page_register_device:$deviceInfo");
       var newDeviceId = response.deviceId.toInt();
       await sharedPreferences.setInt(deviceIdKey, newDeviceId);
       logger.i("init_page set devoce_id = $newDeviceId");

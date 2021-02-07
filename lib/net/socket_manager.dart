@@ -41,7 +41,6 @@ class SocketManager {
       } catch (e) {
         logger.i("连接失败 $e");
         // 连接失败，5秒之后重试
-        sleep(Duration(seconds: 5));
         return;
       }
       logger.i("停止重试");
@@ -99,6 +98,7 @@ class SocketManager {
     logger.i(output);
 
     switch (output.type) {
+      // 登录
       case pb.PackageType.PT_SIGN_IN:
         if (output.code != 0) {
           logger.i("signIn error code:${output.code};message:${output.message}");
@@ -119,6 +119,7 @@ class SocketManager {
           socket.flush();
         });
         break;
+      // 消息同步
       case pb.PackageType.PT_SYNC:
         logger.i("sync");
         var syncOutput = pb.SyncOutput.fromBuffer(output.data);
@@ -138,9 +139,11 @@ class SocketManager {
           socket.flush();
         }
         break;
+      // 心跳
       case pb.PackageType.PT_HEARTBEAT:
         logger.i("heartbeat output");
         break;
+      // 消息发送
       case pb.PackageType.PT_MESSAGE:
         logger.i("message");
         var messageSend = pb.MessageSend.fromBuffer(output.data);
