@@ -45,8 +45,7 @@ class _SearchUserPageState extends State<SearchUserPage> {
               onSubmitted: (text) async {
                 var request = SearchUserReq();
                 request.key = text;
-                var response =
-                    await businessClient.searchUser(request, options: getOptions());
+                var response = await businessClient.searchUser(request);
                 setState(() {
                   users = response.users;
                 });
@@ -65,7 +64,8 @@ class _SearchUserPageState extends State<SearchUserPage> {
                         EdgeInsets.only(left: 5, right: 5, top: 5, bottom: 5),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(10),
-                      child: CachedNetworkImage(imageUrl:users[index].avatarUrl),
+                      child:
+                          CachedNetworkImage(imageUrl: users[index].avatarUrl),
                     ),
                   ),
                   title: Text("${users[index].nickname}"),

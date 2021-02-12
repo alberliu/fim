@@ -1,10 +1,32 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:logger/logger.dart';
+import 'package:path_provider/path_provider.dart';
 
 var logger = Logger(
   printer: MyPrinter(),
+  output: MultiOutput([ConsoleOutput(), FileOutput()]),
 );
 
+class FileOutput extends LogOutput {
+  IOSink sink;
+
+  @override
+  void output(OutputEvent event) async {
+    if (sink == null) {
+      var storageDirectory = await getExternalStorageDirectory();
+      var directory = Directory("${storageDirectory.path}logs");
+      if (!await directory.exists()) {
+        await directory.create(recursive: true);
+      }
+
+      File file = File("${directory.path}log.txt");
+      sink = file.openWrite(mode: FileMode.append);
+    }
+
+    sink.writeAll(event.lines, '\n');
+  }
+}
 
 class MyPrinter extends LogPrinter {
   static final levelPrefixes = {
@@ -55,6 +77,6 @@ class MyPrinter extends LogPrinter {
     var str = lines[3].replaceFirst(RegExp(r'#\d+\s+'), '');
     var start = str.indexOf("(");
     var end = str.indexOf(")");
-    return str.substring(start+1,end);
+    return str.substring(start + 1, end);
   }
 }

@@ -118,7 +118,7 @@ class _NewFriendPageState extends State<NewFriendPage> {
                           EdgeInsets.only(left: 5, right: 5, top: 5, bottom: 5),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(10),
-                        child: CachedNetworkImage(imageUrl:friend.avatarUrl),
+                        child: CachedNetworkImage(imageUrl: friend.avatarUrl),
                       ),
                     ),
                     title: Text("${friend.nickname}"),
@@ -146,7 +146,7 @@ class _NewFriendPageState extends State<NewFriendPage> {
     if (status == NewFriend.agree) {
       var request = AgreeAddFriendReq();
       request.userId = Int64(friend.userId);
-      await logicClient.agreeAddFriend(request, options: getOptions());
+      await logicClient.agreeAddFriend(request);
 
       // 重新加载好友列表
       await friendService.init();

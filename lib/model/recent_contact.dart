@@ -64,7 +64,7 @@ class RecentContact {
         return text.text;
       }
       if (message.objectType == model.Message.objectTypeGroup) {
-        return "${message.senderNickname}：${text.text}";
+        return "${message.senderNickname}:${text.text}";
       }
     }
     if (message.messageType == MessageType.MT_IMAGE.value) {
@@ -72,7 +72,7 @@ class RecentContact {
         return "[图片]";
       }
       if (message.objectType == model.Message.objectTypeGroup) {
-        return "${message.senderNickname}：[图片]";
+        return "${message.senderNickname}:[图片]";
       }
     }
     if (message.messageType == MessageType.MT_COMMAND.value) {

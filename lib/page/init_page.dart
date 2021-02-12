@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:device_info/device_info.dart';
 import 'package:fim/dao/message_dao.dart';
 import 'package:fim/dao/new_friend_dao.dart';
@@ -44,9 +46,10 @@ class InitPage extends StatelessWidget {
     var deviceId = sharedPreferences.getInt(deviceIdKey);
     logger.i("init_page_device_id:$deviceId");
     if (deviceId == null) {
+      logger.i("init_page_init_device:$deviceId");
       var deviceInfo = DeviceInfoPlugin();
       var androidInfo = await deviceInfo.androidInfo;
-
+      logger.i("init_page_get_device:$deviceInfo");
       var request = RegisterDeviceReq();
       request.type = 1; // 这里1表示Android
       request.brand = androidInfo.brand; //
@@ -55,6 +58,7 @@ class InitPage extends StatelessWidget {
       request.sdkVersion = "1.0.0";
 
       var response = await logicClient.registerDevice(request);
+      logger.i("init_page_register_device:$deviceInfo");
       var newDeviceId = response.deviceId.toInt();
       await sharedPreferences.setInt(deviceIdKey, newDeviceId);
       logger.i("init_page set devoce_id = $newDeviceId");
@@ -65,8 +69,7 @@ class InitPage extends StatelessWidget {
     var token = sharedPreferences.getString(tokenKey);
     if (userId == null || token == null) {
       logger.i("用户尚未登录,跳转至登录页面");
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => SignInPage()));
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => SignInPage()));
       return;
     }
 
@@ -88,10 +91,11 @@ class InitPage extends StatelessWidget {
     await newFriendService.initUnread();
 
     // 长连接登录
-    await SocketManager().connect(baseUrl, 8080);
+    SocketManager.serverUrl = baseUrl;
+    SocketManager.serverPort = 8080;
+    SocketManager.connect();
 
     logger.i("跳转至主页");
-    Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (context) => HomePage()));
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomePage()));
   }
 }

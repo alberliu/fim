@@ -8,15 +8,17 @@ import 'package:flutter/cupertino.dart';
 var friendService = FriendService();
 
 class FriendService with ChangeNotifier {
-  List<Friend> friendList;
-  Map<Int64, Friend> friendMap;
+  List<Friend> friendList = [];
+  Map<Int64, Friend> friendMap = {};
 
   init() async {
     logger.i("friendService init");
-    var response =
-        await logicClient.getFriends(GetFriendsReq(), options: getOptions());
 
-    friendList = response.friends;
+    GetFriendsResp resp;
+
+    resp = await logicClient.getFriends(GetFriendsReq());
+
+    friendList = resp.friends;
 
     friendMap = Map();
     for (var friend in friendList) {

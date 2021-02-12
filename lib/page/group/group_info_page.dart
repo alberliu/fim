@@ -52,7 +52,7 @@ class _GroupInfoPageState extends State<GroupInfoPage> {
     var membersReq = GetGroupMembersReq();
     membersReq.groupId = widget.groupId;
     var membersResp =
-        await logicClient.getGroupMembers(membersReq, options: getOptions());
+        await logicClient.getGroupMembers(membersReq);
     members = membersResp.members;
 
     group = await Groups.get(widget.groupId);
@@ -192,7 +192,7 @@ class _GroupInfoPageState extends State<GroupInfoPage> {
     req.avatarUrl = avatarUrl;
     req.name = nameController.text;
     req.introduction = introductionController.text;
-    await logicClient.updateGroup(req, options: getOptions());
+    await logicClient.updateGroup(req);
 
     group.name = req.name;
     group.avatarUrl = req.avatarUrl;

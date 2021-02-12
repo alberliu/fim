@@ -29,7 +29,7 @@ class _GroupsPageState extends State<GroupsPage> {
 
   initData() async {
     var getGroupsResp =
-        await logicClient.getGroups(GetGroupsReq(), options: getOptions());
+        await logicClient.getGroups(GetGroupsReq());
     groups = getGroupsResp.groups;
     loading = false;
     setState(() {});
