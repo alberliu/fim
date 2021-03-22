@@ -132,7 +132,6 @@ class _CreateGroupPageState extends State<CreateGroupPage> {
     }
     createGroupRequest.name = groupName;
     createGroupRequest.avatarUrl = getAvatarUrl();
-    createGroupRequest.type = GroupType.GT_SMALL;
 
     var createGroupResponse = await logicClient.createGroup(createGroupRequest);
 
