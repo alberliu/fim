@@ -67,7 +67,7 @@ class Message {
     }
 
     // 表示是群组发送过来的消息
-    if (message.receiverType == pb.ReceiverType.RT_SMALL_GROUP) {
+    if (message.receiverType == pb.ReceiverType.RT_GROUP) {
       objectType = Message.objectTypeGroup;
       objectId = message.receiverId.toInt();
       senderId = sender.senderId.toInt();
