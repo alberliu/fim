@@ -2,7 +2,7 @@
 //  Generated code. Do not modify.
 //  source: logic.ext.proto
 //
-// @dart = 2.3
+// @dart = 2.12
 // ignore_for_file: annotate_overrides,camel_case_types,unnecessary_const,non_constant_identifier_names,library_prefixes,unused_import,unused_shown_name,return_of_invalid_type,unnecessary_this,prefer_final_fields
 
 import 'dart:async' as $async;
@@ -94,86 +94,86 @@ class LogicExtClient extends $grpc.Client {
               $1.GetGroupMembersResp.fromBuffer(value));
 
   LogicExtClient($grpc.ClientChannel channel,
-      {$grpc.CallOptions options,
-      $core.Iterable<$grpc.ClientInterceptor> interceptors})
+      {$grpc.CallOptions? options,
+      $core.Iterable<$grpc.ClientInterceptor>? interceptors})
       : super(channel, options: options, interceptors: interceptors);
 
   $grpc.ResponseFuture<$1.RegisterDeviceResp> registerDevice(
       $1.RegisterDeviceReq request,
-      {$grpc.CallOptions options}) {
+      {$grpc.CallOptions? options}) {
     return $createUnaryCall(_$registerDevice, request, options: options);
   }
 
   $grpc.ResponseFuture<$1.SendMessageResp> sendMessage(
       $1.SendMessageReq request,
-      {$grpc.CallOptions options}) {
+      {$grpc.CallOptions? options}) {
     return $createUnaryCall(_$sendMessage, request, options: options);
   }
 
   $grpc.ResponseFuture<$1.AddFriendResp> addFriend($1.AddFriendReq request,
-      {$grpc.CallOptions options}) {
+      {$grpc.CallOptions? options}) {
     return $createUnaryCall(_$addFriend, request, options: options);
   }
 
   $grpc.ResponseFuture<$1.AgreeAddFriendResp> agreeAddFriend(
       $1.AgreeAddFriendReq request,
-      {$grpc.CallOptions options}) {
+      {$grpc.CallOptions? options}) {
     return $createUnaryCall(_$agreeAddFriend, request, options: options);
   }
 
   $grpc.ResponseFuture<$1.SetFriendResp> setFriend($1.SetFriendReq request,
-      {$grpc.CallOptions options}) {
+      {$grpc.CallOptions? options}) {
     return $createUnaryCall(_$setFriend, request, options: options);
   }
 
   $grpc.ResponseFuture<$1.GetFriendsResp> getFriends($1.GetFriendsReq request,
-      {$grpc.CallOptions options}) {
+      {$grpc.CallOptions? options}) {
     return $createUnaryCall(_$getFriends, request, options: options);
   }
 
   $grpc.ResponseFuture<$1.CreateGroupResp> createGroup(
       $1.CreateGroupReq request,
-      {$grpc.CallOptions options}) {
+      {$grpc.CallOptions? options}) {
     return $createUnaryCall(_$createGroup, request, options: options);
   }
 
   $grpc.ResponseFuture<$1.UpdateGroupResp> updateGroup(
       $1.UpdateGroupReq request,
-      {$grpc.CallOptions options}) {
+      {$grpc.CallOptions? options}) {
     return $createUnaryCall(_$updateGroup, request, options: options);
   }
 
   $grpc.ResponseFuture<$1.GetGroupResp> getGroup($1.GetGroupReq request,
-      {$grpc.CallOptions options}) {
+      {$grpc.CallOptions? options}) {
     return $createUnaryCall(_$getGroup, request, options: options);
   }
 
   $grpc.ResponseFuture<$1.GetGroupsResp> getGroups($1.GetGroupsReq request,
-      {$grpc.CallOptions options}) {
+      {$grpc.CallOptions? options}) {
     return $createUnaryCall(_$getGroups, request, options: options);
   }
 
   $grpc.ResponseFuture<$1.AddGroupMembersResp> addGroupMembers(
       $1.AddGroupMembersReq request,
-      {$grpc.CallOptions options}) {
+      {$grpc.CallOptions? options}) {
     return $createUnaryCall(_$addGroupMembers, request, options: options);
   }
 
   $grpc.ResponseFuture<$1.UpdateGroupMemberResp> updateGroupMember(
       $1.UpdateGroupMemberReq request,
-      {$grpc.CallOptions options}) {
+      {$grpc.CallOptions? options}) {
     return $createUnaryCall(_$updateGroupMember, request, options: options);
   }
 
   $grpc.ResponseFuture<$1.DeleteGroupMemberResp> deleteGroupMember(
       $1.DeleteGroupMemberReq request,
-      {$grpc.CallOptions options}) {
+      {$grpc.CallOptions? options}) {
     return $createUnaryCall(_$deleteGroupMember, request, options: options);
   }
 
   $grpc.ResponseFuture<$1.GetGroupMembersResp> getGroupMembers(
       $1.GetGroupMembersReq request,
-      {$grpc.CallOptions options}) {
+      {$grpc.CallOptions? options}) {
     return $createUnaryCall(_$getGroupMembers, request, options: options);
   }
 }

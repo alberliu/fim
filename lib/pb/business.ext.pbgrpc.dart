@@ -2,7 +2,7 @@
 //  Generated code. Do not modify.
 //  source: business.ext.proto
 //
-// @dart = 2.3
+// @dart = 2.12
 // ignore_for_file: annotate_overrides,camel_case_types,unnecessary_const,non_constant_identifier_names,library_prefixes,unused_import,unused_shown_name,return_of_invalid_type,unnecessary_this,prefer_final_fields
 
 import 'dart:async' as $async;
@@ -34,27 +34,27 @@ class BusinessExtClient extends $grpc.Client {
           ($core.List<$core.int> value) => $0.SearchUserResp.fromBuffer(value));
 
   BusinessExtClient($grpc.ClientChannel channel,
-      {$grpc.CallOptions options,
-      $core.Iterable<$grpc.ClientInterceptor> interceptors})
+      {$grpc.CallOptions? options,
+      $core.Iterable<$grpc.ClientInterceptor>? interceptors})
       : super(channel, options: options, interceptors: interceptors);
 
   $grpc.ResponseFuture<$0.SignInResp> signIn($0.SignInReq request,
-      {$grpc.CallOptions options}) {
+      {$grpc.CallOptions? options}) {
     return $createUnaryCall(_$signIn, request, options: options);
   }
 
   $grpc.ResponseFuture<$0.GetUserResp> getUser($0.GetUserReq request,
-      {$grpc.CallOptions options}) {
+      {$grpc.CallOptions? options}) {
     return $createUnaryCall(_$getUser, request, options: options);
   }
 
   $grpc.ResponseFuture<$0.UpdateUserResp> updateUser($0.UpdateUserReq request,
-      {$grpc.CallOptions options}) {
+      {$grpc.CallOptions? options}) {
     return $createUnaryCall(_$updateUser, request, options: options);
   }
 
   $grpc.ResponseFuture<$0.SearchUserResp> searchUser($0.SearchUserReq request,
-      {$grpc.CallOptions options}) {
+      {$grpc.CallOptions? options}) {
     return $createUnaryCall(_$searchUser, request, options: options);
   }
 }

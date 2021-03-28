@@ -7,8 +7,8 @@ import 'package:fim/util/toast.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:grpc/grpc.dart';
 
-const String baseUrl = "47.242.224.6";
-const String uploadUrl = "http://47.242.224.6:8085/upload";
+const String baseUrl = "111.229.238.28";
+const String uploadUrl = "http://111.229.238.28:8085/upload";
 
 Map<String, String> getMetadata() {
   Map<String, String> metadata = {};

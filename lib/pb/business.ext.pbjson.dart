@@ -2,9 +2,13 @@
 //  Generated code. Do not modify.
 //  source: business.ext.proto
 //
-// @dart = 2.3
-// ignore_for_file: annotate_overrides,camel_case_types,unnecessary_const,non_constant_identifier_names,library_prefixes,unused_import,unused_shown_name,return_of_invalid_type,unnecessary_this,prefer_final_fields
+// @dart = 2.12
+// ignore_for_file: annotate_overrides,camel_case_types,unnecessary_const,non_constant_identifier_names,library_prefixes,unused_import,unused_shown_name,return_of_invalid_type,unnecessary_this,prefer_final_fields,deprecated_member_use_from_same_package
 
+import 'dart:core' as $core;
+import 'dart:convert' as $convert;
+import 'dart:typed_data' as $typed_data;
+@$core.Deprecated('Use signInReqDescriptor instead')
 const SignInReq$json = const {
   '1': 'SignInReq',
   '2': const [
@@ -14,6 +18,9 @@ const SignInReq$json = const {
   ],
 };
 
+/// Descriptor for `SignInReq`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List signInReqDescriptor = $convert.base64Decode('CglTaWduSW5SZXESIQoMcGhvbmVfbnVtYmVyGAEgASgJUgtwaG9uZU51bWJlchISCgRjb2RlGAIgASgJUgRjb2RlEhsKCWRldmljZV9pZBgDIAEoA1IIZGV2aWNlSWQ=');
+@$core.Deprecated('Use signInRespDescriptor instead')
 const SignInResp$json = const {
   '1': 'SignInResp',
   '2': const [
@@ -23,6 +30,9 @@ const SignInResp$json = const {
   ],
 };
 
+/// Descriptor for `SignInResp`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List signInRespDescriptor = $convert.base64Decode('CgpTaWduSW5SZXNwEhUKBmlzX25ldxgBIAEoCFIFaXNOZXcSFwoHdXNlcl9pZBgCIAEoA1IGdXNlcklkEhQKBXRva2VuGAMgASgJUgV0b2tlbg==');
+@$core.Deprecated('Use userDescriptor instead')
 const User$json = const {
   '1': 'User',
   '2': const [
@@ -36,6 +46,9 @@ const User$json = const {
   ],
 };
 
+/// Descriptor for `User`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List userDescriptor = $convert.base64Decode('CgRVc2VyEhcKB3VzZXJfaWQYASABKANSBnVzZXJJZBIaCghuaWNrbmFtZRgCIAEoCVIIbmlja25hbWUSEAoDc2V4GAMgASgFUgNzZXgSHQoKYXZhdGFyX3VybBgEIAEoCVIJYXZhdGFyVXJsEhQKBWV4dHJhGAUgASgJUgVleHRyYRIfCgtjcmVhdGVfdGltZRgGIAEoA1IKY3JlYXRlVGltZRIfCgt1cGRhdGVfdGltZRgHIAEoA1IKdXBkYXRlVGltZQ==');
+@$core.Deprecated('Use getUserReqDescriptor instead')
 const GetUserReq$json = const {
   '1': 'GetUserReq',
   '2': const [
@@ -43,6 +56,9 @@ const GetUserReq$json = const {
   ],
 };
 
+/// Descriptor for `GetUserReq`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List getUserReqDescriptor = $convert.base64Decode('CgpHZXRVc2VyUmVxEhcKB3VzZXJfaWQYASABKANSBnVzZXJJZA==');
+@$core.Deprecated('Use getUserRespDescriptor instead')
 const GetUserResp$json = const {
   '1': 'GetUserResp',
   '2': const [
@@ -50,6 +66,9 @@ const GetUserResp$json = const {
   ],
 };
 
+/// Descriptor for `GetUserResp`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List getUserRespDescriptor = $convert.base64Decode('CgtHZXRVc2VyUmVzcBIcCgR1c2VyGAEgASgLMggucGIuVXNlclIEdXNlcg==');
+@$core.Deprecated('Use updateUserReqDescriptor instead')
 const UpdateUserReq$json = const {
   '1': 'UpdateUserReq',
   '2': const [
@@ -60,10 +79,16 @@ const UpdateUserReq$json = const {
   ],
 };
 
+/// Descriptor for `UpdateUserReq`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List updateUserReqDescriptor = $convert.base64Decode('Cg1VcGRhdGVVc2VyUmVxEhoKCG5pY2tuYW1lGAEgASgJUghuaWNrbmFtZRIQCgNzZXgYAiABKAVSA3NleBIdCgphdmF0YXJfdXJsGAMgASgJUglhdmF0YXJVcmwSFAoFZXh0cmEYBCABKAlSBWV4dHJh');
+@$core.Deprecated('Use updateUserRespDescriptor instead')
 const UpdateUserResp$json = const {
   '1': 'UpdateUserResp',
 };
 
+/// Descriptor for `UpdateUserResp`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List updateUserRespDescriptor = $convert.base64Decode('Cg5VcGRhdGVVc2VyUmVzcA==');
+@$core.Deprecated('Use searchUserReqDescriptor instead')
 const SearchUserReq$json = const {
   '1': 'SearchUserReq',
   '2': const [
@@ -71,6 +96,9 @@ const SearchUserReq$json = const {
   ],
 };
 
+/// Descriptor for `SearchUserReq`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List searchUserReqDescriptor = $convert.base64Decode('Cg1TZWFyY2hVc2VyUmVxEhAKA2tleRgBIAEoCVIDa2V5');
+@$core.Deprecated('Use searchUserRespDescriptor instead')
 const SearchUserResp$json = const {
   '1': 'SearchUserResp',
   '2': const [
@@ -78,3 +106,5 @@ const SearchUserResp$json = const {
   ],
 };
 
+/// Descriptor for `SearchUserResp`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List searchUserRespDescriptor = $convert.base64Decode('Cg5TZWFyY2hVc2VyUmVzcBIeCgV1c2VycxgBIAMoCzIILnBiLlVzZXJSBXVzZXJz');
