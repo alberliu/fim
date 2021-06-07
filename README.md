@@ -5,14 +5,11 @@
 ## 协议编译命令
 protoc --dart_out=grpc:../pb/ *ext.proto
 
-APP截图：
+APP截图：  
+![登录.png](https://upload-images.jianshu.io/upload_images/5760439-c8c5e61815b34687.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/310)
+![好友.png](https://upload-images.jianshu.io/upload_images/5760439-9ea6a87711f8e749.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/310)
+![聊天.png](https://upload-images.jianshu.io/upload_images/5760439-2f1e7da8be247e4b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/310)
+![群组.png](https://upload-images.jianshu.io/upload_images/5760439-beb97223497e2ee9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/310)
+![我的.png](https://upload-images.jianshu.io/upload_images/5760439-aee324007a1d2eb1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/310)
+![消息.png](https://upload-images.jianshu.io/upload_images/5760439-47597c7c5859d515.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/310)
 
-[![8a3937b2c4a53b568fea418ff6f0ee4a.md.png](https://p.130014.xyz/2021/02/07/8a3937b2c4a53b568fea418ff6f0ee4a.md.png)](http://www.wailian.work/image/QauQqB)
-[![dd47b5027e4983a068ca91b2ef1b8b1c.md.png](https://p.130014.xyz/2021/02/07/dd47b5027e4983a068ca91b2ef1b8b1c.md.png)](http://www.wailian.work/image/Qau58S)
-[![8be32a9ab20de799a2e2d53d5c23eddb.md.png](https://p.130014.xyz/2021/02/07/8be32a9ab20de799a2e2d53d5c23eddb.md.png)](http://www.wailian.work/image/QauBFI)
-[![2fa211eb51022831c21da470a2d87330.md.png](https://p.130014.xyz/2021/02/07/2fa211eb51022831c21da470a2d87330.md.png)](http://www.wailian.work/image/QauMRb)
-[![8d3b9dfa3b022c727c640e8938b34105.md.png](https://p.130014.xyz/2021/02/07/8d3b9dfa3b022c727c640e8938b34105.md.png)](http://www.wailian.work/image/Qan758)
-[![63c839904f676c69892ef54946094684.md.png](https://p.130014.xyz/2021/02/07/63c839904f676c69892ef54946094684.md.png)](http://www.wailian.work/image/QanLaO)
-
-如果图片无法正常显示，请点击这里预览
-http://www.wailian.work/album/fim.DGVmG
