@@ -36,14 +36,7 @@ class _MyBottomNavigationBarState extends State<MyBottomNavigationBar> {
 
     return Container(
       decoration: new BoxDecoration(
-        color: Colors.grey[300],
-        //设置四周边框
-        border: Border(
-          top: BorderSide(
-            width: 1, //宽度
-            color: Colors.grey[400], //边框颜色
-          ),
-        ),
+        color: Colors.grey[200],
       ),
       height: widget.height,
       child: Row(

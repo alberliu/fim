@@ -26,7 +26,7 @@ class _MyPageState extends State<MyPage> {
   Widget build(BuildContext context) {
     logger.i("my_page build");
     return Container(
-      color: backgroundColor,
+      color: contentColor,
       child: Column(
         children: <Widget>[
           Container(

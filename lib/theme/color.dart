@@ -4,4 +4,6 @@ import 'package:flutter/material.dart';
 
 Color backgroundColor = Colors.grey[200];
 
-Brightness appBarBrightness =Brightness.light;
+Color contentColor = Colors.grey[100];
+
+Brightness appBarBrightness = Brightness.light;
