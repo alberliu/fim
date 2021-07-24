@@ -55,7 +55,7 @@ class MyInterceptor extends ClientInterceptor {
 final logicClient = LogicExtClient(
     ClientChannel(
       baseUrl,
-      port: 50001,
+      port: 50100,
       options: const ChannelOptions(credentials: ChannelCredentials.insecure()),
     ),
     interceptors: [MyInterceptor()]);
@@ -63,7 +63,7 @@ final logicClient = LogicExtClient(
 final businessClient = BusinessExtClient(
     ClientChannel(
       baseUrl,
-      port: 50301,
+      port: 50200,
       options: const ChannelOptions(credentials: ChannelCredentials.insecure()),
     ),
     interceptors: [MyInterceptor()]);
