@@ -81,13 +81,6 @@ const UpdateUserReq$json = const {
 
 /// Descriptor for `UpdateUserReq`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List updateUserReqDescriptor = $convert.base64Decode('Cg1VcGRhdGVVc2VyUmVxEhoKCG5pY2tuYW1lGAEgASgJUghuaWNrbmFtZRIQCgNzZXgYAiABKAVSA3NleBIdCgphdmF0YXJfdXJsGAMgASgJUglhdmF0YXJVcmwSFAoFZXh0cmEYBCABKAlSBWV4dHJh');
-@$core.Deprecated('Use updateUserRespDescriptor instead')
-const UpdateUserResp$json = const {
-  '1': 'UpdateUserResp',
-};
-
-/// Descriptor for `UpdateUserResp`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List updateUserRespDescriptor = $convert.base64Decode('Cg5VcGRhdGVVc2VyUmVzcA==');
 @$core.Deprecated('Use searchUserReqDescriptor instead')
 const SearchUserReq$json = const {
   '1': 'SearchUserReq',

@@ -1,6 +1,6 @@
 ///
 //  Generated code. Do not modify.
-//  source: conn.ext.proto
+//  source: connect.ext.proto
 //
 // @dart = 2.12
 // ignore_for_file: annotate_overrides,camel_case_types,unnecessary_const,non_constant_identifier_names,library_prefixes,unused_import,unused_shown_name,return_of_invalid_type,unnecessary_this,prefer_final_fields,deprecated_member_use_from_same_package
@@ -17,11 +17,12 @@ const PackageType$json = const {
     const {'1': 'PT_SYNC', '2': 2},
     const {'1': 'PT_HEARTBEAT', '2': 3},
     const {'1': 'PT_MESSAGE', '2': 4},
+    const {'1': 'PT_SUBSCRIBE_ROOM', '2': 5},
   ],
 };
 
 /// Descriptor for `PackageType`. Decode as a `google.protobuf.EnumDescriptorProto`.
-final $typed_data.Uint8List packageTypeDescriptor = $convert.base64Decode('CgtQYWNrYWdlVHlwZRIOCgpQVF9VTktOT1dOEAASDgoKUFRfU0lHTl9JThABEgsKB1BUX1NZTkMQAhIQCgxQVF9IRUFSVEJFQVQQAxIOCgpQVF9NRVNTQUdFEAQ=');
+final $typed_data.Uint8List packageTypeDescriptor = $convert.base64Decode('CgtQYWNrYWdlVHlwZRIOCgpQVF9VTktOT1dOEAASDgoKUFRfU0lHTl9JThABEgsKB1BUX1NZTkMQAhIQCgxQVF9IRUFSVEJFQVQQAxIOCgpQVF9NRVNTQUdFEAQSFQoRUFRfU1VCU0NSSUJFX1JPT00QBQ==');
 @$core.Deprecated('Use messageTypeDescriptor instead')
 const MessageType$json = const {
   '1': 'MessageType',
@@ -47,11 +48,12 @@ const ReceiverType$json = const {
     const {'1': 'RT_UNKNOWN', '2': 0},
     const {'1': 'RT_USER', '2': 1},
     const {'1': 'RT_GROUP', '2': 2},
+    const {'1': 'RT_ROOM', '2': 3},
   ],
 };
 
 /// Descriptor for `ReceiverType`. Decode as a `google.protobuf.EnumDescriptorProto`.
-final $typed_data.Uint8List receiverTypeDescriptor = $convert.base64Decode('CgxSZWNlaXZlclR5cGUSDgoKUlRfVU5LTk9XThAAEgsKB1JUX1VTRVIQARIMCghSVF9HUk9VUBAC');
+final $typed_data.Uint8List receiverTypeDescriptor = $convert.base64Decode('CgxSZWNlaXZlclR5cGUSDgoKUlRfVU5LTk9XThAAEgsKB1JUX1VTRVIQARIMCghSVF9HUk9VUBACEgsKB1JUX1JPT00QAw==');
 @$core.Deprecated('Use senderTypeDescriptor instead')
 const SenderType$json = const {
   '1': 'SenderType',
@@ -101,14 +103,15 @@ const Sender$json = const {
   '2': const [
     const {'1': 'sender_type', '3': 1, '4': 1, '5': 14, '6': '.pb.SenderType', '10': 'senderType'},
     const {'1': 'sender_id', '3': 2, '4': 1, '5': 3, '10': 'senderId'},
-    const {'1': 'avatar_url', '3': 3, '4': 1, '5': 9, '10': 'avatarUrl'},
-    const {'1': 'nickname', '3': 4, '4': 1, '5': 9, '10': 'nickname'},
-    const {'1': 'extra', '3': 5, '4': 1, '5': 9, '10': 'extra'},
+    const {'1': 'device_id', '3': 3, '4': 1, '5': 3, '10': 'deviceId'},
+    const {'1': 'avatar_url', '3': 4, '4': 1, '5': 9, '10': 'avatarUrl'},
+    const {'1': 'nickname', '3': 5, '4': 1, '5': 9, '10': 'nickname'},
+    const {'1': 'extra', '3': 6, '4': 1, '5': 9, '10': 'extra'},
   ],
 };
 
 /// Descriptor for `Sender`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List senderDescriptor = $convert.base64Decode('CgZTZW5kZXISLwoLc2VuZGVyX3R5cGUYASABKA4yDi5wYi5TZW5kZXJUeXBlUgpzZW5kZXJUeXBlEhsKCXNlbmRlcl9pZBgCIAEoA1IIc2VuZGVySWQSHQoKYXZhdGFyX3VybBgDIAEoCVIJYXZhdGFyVXJsEhoKCG5pY2tuYW1lGAQgASgJUghuaWNrbmFtZRIUCgVleHRyYRgFIAEoCVIFZXh0cmE=');
+final $typed_data.Uint8List senderDescriptor = $convert.base64Decode('CgZTZW5kZXISLwoLc2VuZGVyX3R5cGUYASABKA4yDi5wYi5TZW5kZXJUeXBlUgpzZW5kZXJUeXBlEhsKCXNlbmRlcl9pZBgCIAEoA1IIc2VuZGVySWQSGwoJZGV2aWNlX2lkGAMgASgDUghkZXZpY2VJZBIdCgphdmF0YXJfdXJsGAQgASgJUglhdmF0YXJVcmwSGgoIbmlja25hbWUYBSABKAlSCG5pY2tuYW1lEhQKBWV4dHJhGAYgASgJUgVleHRyYQ==');
 @$core.Deprecated('Use textDescriptor instead')
 const Text$json = const {
   '1': 'Text',
@@ -262,6 +265,17 @@ const SyncOutput$json = const {
 
 /// Descriptor for `SyncOutput`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List syncOutputDescriptor = $convert.base64Decode('CgpTeW5jT3V0cHV0EicKCG1lc3NhZ2VzGAEgAygLMgsucGIuTWVzc2FnZVIIbWVzc2FnZXMSGQoIaGFzX21vcmUYAiABKAhSB2hhc01vcmU=');
+@$core.Deprecated('Use subscribeRoomInputDescriptor instead')
+const SubscribeRoomInput$json = const {
+  '1': 'SubscribeRoomInput',
+  '2': const [
+    const {'1': 'room_id', '3': 1, '4': 1, '5': 3, '10': 'roomId'},
+    const {'1': 'seq', '3': 2, '4': 1, '5': 3, '10': 'seq'},
+  ],
+};
+
+/// Descriptor for `SubscribeRoomInput`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List subscribeRoomInputDescriptor = $convert.base64Decode('ChJTdWJzY3JpYmVSb29tSW5wdXQSFwoHcm9vbV9pZBgBIAEoA1IGcm9vbUlkEhAKA3NlcRgCIAEoA1IDc2Vx');
 @$core.Deprecated('Use messageSendDescriptor instead')
 const MessageSend$json = const {
   '1': 'MessageSend',

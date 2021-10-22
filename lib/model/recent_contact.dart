@@ -2,7 +2,7 @@ import 'package:fim/service/chat_service.dart';
 import 'package:fim/service/friend_service.dart';
 import 'package:fim/service/groups.dart';
 import 'package:fim/model/message.dart' as model;
-import 'package:fim/pb/conn.ext.pb.dart';
+import 'package:fim/pb/connect.ext.pb.dart';
 import 'package:intl/intl.dart';
 import 'package:fixnum/fixnum.dart';
 

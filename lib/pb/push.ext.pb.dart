@@ -10,7 +10,7 @@ import 'dart:core' as $core;
 import 'package:fixnum/fixnum.dart' as $fixnum;
 import 'package:protobuf/protobuf.dart' as $pb;
 
-import 'logic.ext.pb.dart' as $1;
+import 'logic.ext.pb.dart' as $2;
 
 export 'push.ext.pbenum.dart';
 
@@ -299,7 +299,7 @@ class AddGroupMembersPush extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'AddGroupMembersPush', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pb'), createEmptyInstance: create)
     ..aInt64(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'optId')
     ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'optName')
-    ..pc<$1.GroupMember>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'members', $pb.PbFieldType.PM, subBuilder: $1.GroupMember.create)
+    ..pc<$2.GroupMember>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'members', $pb.PbFieldType.PM, subBuilder: $2.GroupMember.create)
     ..hasRequiredFields = false
   ;
 
@@ -307,7 +307,7 @@ class AddGroupMembersPush extends $pb.GeneratedMessage {
   factory AddGroupMembersPush({
     $fixnum.Int64? optId,
     $core.String? optName,
-    $core.Iterable<$1.GroupMember>? members,
+    $core.Iterable<$2.GroupMember>? members,
   }) {
     final _result = create();
     if (optId != null) {
@@ -361,7 +361,7 @@ class AddGroupMembersPush extends $pb.GeneratedMessage {
   void clearOptName() => clearField(2);
 
   @$pb.TagNumber(3)
-  $core.List<$1.GroupMember> get members => $_getList(2);
+  $core.List<$2.GroupMember> get members => $_getList(2);
 }
 
 class RemoveGroupMemberPush extends $pb.GeneratedMessage {

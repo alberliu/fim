@@ -1,6 +1,6 @@
 ///
 //  Generated code. Do not modify.
-//  source: conn.ext.proto
+//  source: connect.ext.proto
 //
 // @dart = 2.12
 // ignore_for_file: annotate_overrides,camel_case_types,unnecessary_const,non_constant_identifier_names,library_prefixes,unused_import,unused_shown_name,return_of_invalid_type,unnecessary_this,prefer_final_fields
@@ -15,6 +15,7 @@ class PackageType extends $pb.ProtobufEnum {
   static const PackageType PT_SYNC = PackageType._(2, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'PT_SYNC');
   static const PackageType PT_HEARTBEAT = PackageType._(3, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'PT_HEARTBEAT');
   static const PackageType PT_MESSAGE = PackageType._(4, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'PT_MESSAGE');
+  static const PackageType PT_SUBSCRIBE_ROOM = PackageType._(5, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'PT_SUBSCRIBE_ROOM');
 
   static const $core.List<PackageType> values = <PackageType> [
     PT_UNKNOWN,
@@ -22,6 +23,7 @@ class PackageType extends $pb.ProtobufEnum {
     PT_SYNC,
     PT_HEARTBEAT,
     PT_MESSAGE,
+    PT_SUBSCRIBE_ROOM,
   ];
 
   static final $core.Map<$core.int, PackageType> _byValue = $pb.ProtobufEnum.initByValue(values);
@@ -63,11 +65,13 @@ class ReceiverType extends $pb.ProtobufEnum {
   static const ReceiverType RT_UNKNOWN = ReceiverType._(0, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'RT_UNKNOWN');
   static const ReceiverType RT_USER = ReceiverType._(1, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'RT_USER');
   static const ReceiverType RT_GROUP = ReceiverType._(2, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'RT_GROUP');
+  static const ReceiverType RT_ROOM = ReceiverType._(3, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'RT_ROOM');
 
   static const $core.List<ReceiverType> values = <ReceiverType> [
     RT_UNKNOWN,
     RT_USER,
     RT_GROUP,
+    RT_ROOM,
   ];
 
   static final $core.Map<$core.int, ReceiverType> _byValue = $pb.ProtobufEnum.initByValue(values);

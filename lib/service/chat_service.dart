@@ -1,6 +1,6 @@
 import 'package:fim/dao/message_dao.dart';
-import 'package:fim/pb/conn.ext.pb.dart' as pb;
-import 'package:fim/pb/conn.ext.pbenum.dart';
+import 'package:fim/pb/connect.ext.pb.dart' as pb;
+import 'package:fim/pb/connect.ext.pbenum.dart';
 import 'package:fim/pb/push.ext.pb.dart';
 import 'package:fim/pb/push.ext.pbenum.dart';
 import 'package:fim/util/logger.dart';

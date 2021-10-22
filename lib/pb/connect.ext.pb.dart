@@ -1,6 +1,6 @@
 ///
 //  Generated code. Do not modify.
-//  source: conn.ext.proto
+//  source: connect.ext.proto
 //
 // @dart = 2.12
 // ignore_for_file: annotate_overrides,camel_case_types,unnecessary_const,non_constant_identifier_names,library_prefixes,unused_import,unused_shown_name,return_of_invalid_type,unnecessary_this,prefer_final_fields
@@ -10,9 +10,9 @@ import 'dart:core' as $core;
 import 'package:fixnum/fixnum.dart' as $fixnum;
 import 'package:protobuf/protobuf.dart' as $pb;
 
-import 'conn.ext.pbenum.dart';
+import 'connect.ext.pbenum.dart';
 
-export 'conn.ext.pbenum.dart';
+export 'connect.ext.pbenum.dart';
 
 class Message extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'Message', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pb'), createEmptyInstance: create)
@@ -173,9 +173,10 @@ class Sender extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'Sender', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pb'), createEmptyInstance: create)
     ..e<SenderType>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'senderType', $pb.PbFieldType.OE, defaultOrMaker: SenderType.ST_UNKNOWN, valueOf: SenderType.valueOf, enumValues: SenderType.values)
     ..aInt64(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'senderId')
-    ..aOS(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'avatarUrl')
-    ..aOS(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'nickname')
-    ..aOS(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'extra')
+    ..aInt64(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'deviceId')
+    ..aOS(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'avatarUrl')
+    ..aOS(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'nickname')
+    ..aOS(6, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'extra')
     ..hasRequiredFields = false
   ;
 
@@ -183,6 +184,7 @@ class Sender extends $pb.GeneratedMessage {
   factory Sender({
     SenderType? senderType,
     $fixnum.Int64? senderId,
+    $fixnum.Int64? deviceId,
     $core.String? avatarUrl,
     $core.String? nickname,
     $core.String? extra,
@@ -193,6 +195,9 @@ class Sender extends $pb.GeneratedMessage {
     }
     if (senderId != null) {
       _result.senderId = senderId;
+    }
+    if (deviceId != null) {
+      _result.deviceId = deviceId;
     }
     if (avatarUrl != null) {
       _result.avatarUrl = avatarUrl;
@@ -245,31 +250,40 @@ class Sender extends $pb.GeneratedMessage {
   void clearSenderId() => clearField(2);
 
   @$pb.TagNumber(3)
-  $core.String get avatarUrl => $_getSZ(2);
+  $fixnum.Int64 get deviceId => $_getI64(2);
   @$pb.TagNumber(3)
-  set avatarUrl($core.String v) { $_setString(2, v); }
+  set deviceId($fixnum.Int64 v) { $_setInt64(2, v); }
   @$pb.TagNumber(3)
-  $core.bool hasAvatarUrl() => $_has(2);
+  $core.bool hasDeviceId() => $_has(2);
   @$pb.TagNumber(3)
-  void clearAvatarUrl() => clearField(3);
+  void clearDeviceId() => clearField(3);
 
   @$pb.TagNumber(4)
-  $core.String get nickname => $_getSZ(3);
+  $core.String get avatarUrl => $_getSZ(3);
   @$pb.TagNumber(4)
-  set nickname($core.String v) { $_setString(3, v); }
+  set avatarUrl($core.String v) { $_setString(3, v); }
   @$pb.TagNumber(4)
-  $core.bool hasNickname() => $_has(3);
+  $core.bool hasAvatarUrl() => $_has(3);
   @$pb.TagNumber(4)
-  void clearNickname() => clearField(4);
+  void clearAvatarUrl() => clearField(4);
 
   @$pb.TagNumber(5)
-  $core.String get extra => $_getSZ(4);
+  $core.String get nickname => $_getSZ(4);
   @$pb.TagNumber(5)
-  set extra($core.String v) { $_setString(4, v); }
+  set nickname($core.String v) { $_setString(4, v); }
   @$pb.TagNumber(5)
-  $core.bool hasExtra() => $_has(4);
+  $core.bool hasNickname() => $_has(4);
   @$pb.TagNumber(5)
-  void clearExtra() => clearField(5);
+  void clearNickname() => clearField(5);
+
+  @$pb.TagNumber(6)
+  $core.String get extra => $_getSZ(5);
+  @$pb.TagNumber(6)
+  set extra($core.String v) { $_setString(5, v); }
+  @$pb.TagNumber(6)
+  $core.bool hasExtra() => $_has(5);
+  @$pb.TagNumber(6)
+  void clearExtra() => clearField(6);
 }
 
 class Text extends $pb.GeneratedMessage {
@@ -1197,6 +1211,67 @@ class SyncOutput extends $pb.GeneratedMessage {
   $core.bool hasHasMore() => $_has(1);
   @$pb.TagNumber(2)
   void clearHasMore() => clearField(2);
+}
+
+class SubscribeRoomInput extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'SubscribeRoomInput', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pb'), createEmptyInstance: create)
+    ..aInt64(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'roomId')
+    ..aInt64(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'seq')
+    ..hasRequiredFields = false
+  ;
+
+  SubscribeRoomInput._() : super();
+  factory SubscribeRoomInput({
+    $fixnum.Int64? roomId,
+    $fixnum.Int64? seq,
+  }) {
+    final _result = create();
+    if (roomId != null) {
+      _result.roomId = roomId;
+    }
+    if (seq != null) {
+      _result.seq = seq;
+    }
+    return _result;
+  }
+  factory SubscribeRoomInput.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory SubscribeRoomInput.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  SubscribeRoomInput clone() => SubscribeRoomInput()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  SubscribeRoomInput copyWith(void Function(SubscribeRoomInput) updates) => super.copyWith((message) => updates(message as SubscribeRoomInput)) as SubscribeRoomInput; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static SubscribeRoomInput create() => SubscribeRoomInput._();
+  SubscribeRoomInput createEmptyInstance() => create();
+  static $pb.PbList<SubscribeRoomInput> createRepeated() => $pb.PbList<SubscribeRoomInput>();
+  @$core.pragma('dart2js:noInline')
+  static SubscribeRoomInput getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<SubscribeRoomInput>(create);
+  static SubscribeRoomInput? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $fixnum.Int64 get roomId => $_getI64(0);
+  @$pb.TagNumber(1)
+  set roomId($fixnum.Int64 v) { $_setInt64(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasRoomId() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearRoomId() => clearField(1);
+
+  @$pb.TagNumber(2)
+  $fixnum.Int64 get seq => $_getI64(1);
+  @$pb.TagNumber(2)
+  set seq($fixnum.Int64 v) { $_setInt64(1, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasSeq() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearSeq() => clearField(2);
 }
 
 class MessageSend extends $pb.GeneratedMessage {

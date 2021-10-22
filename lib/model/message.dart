@@ -1,5 +1,5 @@
 import 'dart:typed_data';
-import 'package:fim/pb/conn.ext.pb.dart' as pb;
+import 'package:fim/pb/connect.ext.pb.dart' as pb;
 import 'package:fim/pb/push.ext.pb.dart';
 import 'package:fixnum/fixnum.dart';
 

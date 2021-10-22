@@ -70,6 +70,21 @@ const SendMessageResp$json = const {
 
 /// Descriptor for `SendMessageResp`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List sendMessageRespDescriptor = $convert.base64Decode('Cg9TZW5kTWVzc2FnZVJlc3ASEAoDc2VxGAEgASgDUgNzZXE=');
+@$core.Deprecated('Use pushRoomReqDescriptor instead')
+const PushRoomReq$json = const {
+  '1': 'PushRoomReq',
+  '2': const [
+    const {'1': 'room_id', '3': 1, '4': 1, '5': 3, '10': 'roomId'},
+    const {'1': 'message_type', '3': 2, '4': 1, '5': 14, '6': '.pb.MessageType', '10': 'messageType'},
+    const {'1': 'message_content', '3': 3, '4': 1, '5': 12, '10': 'messageContent'},
+    const {'1': 'send_time', '3': 4, '4': 1, '5': 3, '10': 'sendTime'},
+    const {'1': 'is_persist', '3': 5, '4': 1, '5': 8, '10': 'isPersist'},
+    const {'1': 'is_priority', '3': 6, '4': 1, '5': 8, '10': 'isPriority'},
+  ],
+};
+
+/// Descriptor for `PushRoomReq`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List pushRoomReqDescriptor = $convert.base64Decode('CgtQdXNoUm9vbVJlcRIXCgdyb29tX2lkGAEgASgDUgZyb29tSWQSMgoMbWVzc2FnZV90eXBlGAIgASgOMg8ucGIuTWVzc2FnZVR5cGVSC21lc3NhZ2VUeXBlEicKD21lc3NhZ2VfY29udGVudBgDIAEoDFIObWVzc2FnZUNvbnRlbnQSGwoJc2VuZF90aW1lGAQgASgDUghzZW5kVGltZRIdCgppc19wZXJzaXN0GAUgASgIUglpc1BlcnNpc3QSHwoLaXNfcHJpb3JpdHkYBiABKAhSCmlzUHJpb3JpdHk=');
 @$core.Deprecated('Use addFriendReqDescriptor instead')
 const AddFriendReq$json = const {
   '1': 'AddFriendReq',
@@ -82,13 +97,6 @@ const AddFriendReq$json = const {
 
 /// Descriptor for `AddFriendReq`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List addFriendReqDescriptor = $convert.base64Decode('CgxBZGRGcmllbmRSZXESGwoJZnJpZW5kX2lkGAEgASgDUghmcmllbmRJZBIYCgdyZW1hcmtzGAIgASgJUgdyZW1hcmtzEiAKC2Rlc2NyaXB0aW9uGAMgASgJUgtkZXNjcmlwdGlvbg==');
-@$core.Deprecated('Use addFriendRespDescriptor instead')
-const AddFriendResp$json = const {
-  '1': 'AddFriendResp',
-};
-
-/// Descriptor for `AddFriendResp`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List addFriendRespDescriptor = $convert.base64Decode('Cg1BZGRGcmllbmRSZXNw');
 @$core.Deprecated('Use agreeAddFriendReqDescriptor instead')
 const AgreeAddFriendReq$json = const {
   '1': 'AgreeAddFriendReq',
@@ -100,13 +108,6 @@ const AgreeAddFriendReq$json = const {
 
 /// Descriptor for `AgreeAddFriendReq`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List agreeAddFriendReqDescriptor = $convert.base64Decode('ChFBZ3JlZUFkZEZyaWVuZFJlcRIXCgd1c2VyX2lkGAEgASgDUgZ1c2VySWQSGAoHcmVtYXJrcxgCIAEoCVIHcmVtYXJrcw==');
-@$core.Deprecated('Use agreeAddFriendRespDescriptor instead')
-const AgreeAddFriendResp$json = const {
-  '1': 'AgreeAddFriendResp',
-};
-
-/// Descriptor for `AgreeAddFriendResp`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List agreeAddFriendRespDescriptor = $convert.base64Decode('ChJBZ3JlZUFkZEZyaWVuZFJlc3A=');
 @$core.Deprecated('Use setFriendReqDescriptor instead')
 const SetFriendReq$json = const {
   '1': 'SetFriendReq',
@@ -148,13 +149,6 @@ const Friend$json = const {
 
 /// Descriptor for `Friend`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List friendDescriptor = $convert.base64Decode('CgZGcmllbmQSFwoHdXNlcl9pZBgBIAEoA1IGdXNlcklkEiEKDHBob25lX251bWJlchgCIAEoCVILcGhvbmVOdW1iZXISGgoIbmlja25hbWUYAyABKAlSCG5pY2tuYW1lEhAKA3NleBgEIAEoBVIDc2V4Eh0KCmF2YXRhcl91cmwYBSABKAlSCWF2YXRhclVybBIdCgp1c2VyX2V4dHJhGAYgASgJUgl1c2VyRXh0cmESGAoHcmVtYXJrcxgHIAEoCVIHcmVtYXJrcxIUCgVleHRyYRgIIAEoCVIFZXh0cmE=');
-@$core.Deprecated('Use getFriendsReqDescriptor instead')
-const GetFriendsReq$json = const {
-  '1': 'GetFriendsReq',
-};
-
-/// Descriptor for `GetFriendsReq`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List getFriendsReqDescriptor = $convert.base64Decode('Cg1HZXRGcmllbmRzUmVx');
 @$core.Deprecated('Use getFriendsRespDescriptor instead')
 const GetFriendsResp$json = const {
   '1': 'GetFriendsResp',
@@ -203,13 +197,6 @@ const UpdateGroupReq$json = const {
 
 /// Descriptor for `UpdateGroupReq`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List updateGroupReqDescriptor = $convert.base64Decode('Cg5VcGRhdGVHcm91cFJlcRIZCghncm91cF9pZBgBIAEoA1IHZ3JvdXBJZBIdCgphdmF0YXJfdXJsGAIgASgJUglhdmF0YXJVcmwSEgoEbmFtZRgDIAEoCVIEbmFtZRIiCgxpbnRyb2R1Y3Rpb24YBCABKAlSDGludHJvZHVjdGlvbhIUCgVleHRyYRgFIAEoCVIFZXh0cmE=');
-@$core.Deprecated('Use updateGroupRespDescriptor instead')
-const UpdateGroupResp$json = const {
-  '1': 'UpdateGroupResp',
-};
-
-/// Descriptor for `UpdateGroupResp`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List updateGroupRespDescriptor = $convert.base64Decode('Cg9VcGRhdGVHcm91cFJlc3A=');
 @$core.Deprecated('Use getGroupReqDescriptor instead')
 const GetGroupReq$json = const {
   '1': 'GetGroupReq',
@@ -247,13 +234,6 @@ const Group$json = const {
 
 /// Descriptor for `Group`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List groupDescriptor = $convert.base64Decode('CgVHcm91cBIZCghncm91cF9pZBgBIAEoA1IHZ3JvdXBJZBISCgRuYW1lGAIgASgJUgRuYW1lEh0KCmF2YXRhcl91cmwYAyABKAlSCWF2YXRhclVybBIiCgxpbnRyb2R1Y3Rpb24YBCABKAlSDGludHJvZHVjdGlvbhIZCgh1c2VyX211bRgFIAEoBVIHdXNlck11bRIUCgVleHRyYRgGIAEoCVIFZXh0cmESHwoLY3JlYXRlX3RpbWUYByABKANSCmNyZWF0ZVRpbWUSHwoLdXBkYXRlX3RpbWUYCCABKANSCnVwZGF0ZVRpbWU=');
-@$core.Deprecated('Use getGroupsReqDescriptor instead')
-const GetGroupsReq$json = const {
-  '1': 'GetGroupsReq',
-};
-
-/// Descriptor for `GetGroupsReq`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List getGroupsReqDescriptor = $convert.base64Decode('CgxHZXRHcm91cHNSZXE=');
 @$core.Deprecated('Use getGroupsRespDescriptor instead')
 const GetGroupsResp$json = const {
   '1': 'GetGroupsResp',
@@ -299,13 +279,6 @@ const UpdateGroupMemberReq$json = const {
 
 /// Descriptor for `UpdateGroupMemberReq`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List updateGroupMemberReqDescriptor = $convert.base64Decode('ChRVcGRhdGVHcm91cE1lbWJlclJlcRIZCghncm91cF9pZBgBIAEoA1IHZ3JvdXBJZBIXCgd1c2VyX2lkGAIgASgDUgZ1c2VySWQSLwoLbWVtYmVyX3R5cGUYAyABKA4yDi5wYi5NZW1iZXJUeXBlUgptZW1iZXJUeXBlEhgKB3JlbWFya3MYBCABKAlSB3JlbWFya3MSFAoFZXh0cmEYBSABKAlSBWV4dHJh');
-@$core.Deprecated('Use updateGroupMemberRespDescriptor instead')
-const UpdateGroupMemberResp$json = const {
-  '1': 'UpdateGroupMemberResp',
-};
-
-/// Descriptor for `UpdateGroupMemberResp`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List updateGroupMemberRespDescriptor = $convert.base64Decode('ChVVcGRhdGVHcm91cE1lbWJlclJlc3A=');
 @$core.Deprecated('Use deleteGroupMemberReqDescriptor instead')
 const DeleteGroupMemberReq$json = const {
   '1': 'DeleteGroupMemberReq',
@@ -317,13 +290,6 @@ const DeleteGroupMemberReq$json = const {
 
 /// Descriptor for `DeleteGroupMemberReq`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List deleteGroupMemberReqDescriptor = $convert.base64Decode('ChREZWxldGVHcm91cE1lbWJlclJlcRIZCghncm91cF9pZBgBIAEoA1IHZ3JvdXBJZBIXCgd1c2VyX2lkGAIgASgDUgZ1c2VySWQ=');
-@$core.Deprecated('Use deleteGroupMemberRespDescriptor instead')
-const DeleteGroupMemberResp$json = const {
-  '1': 'DeleteGroupMemberResp',
-};
-
-/// Descriptor for `DeleteGroupMemberResp`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List deleteGroupMemberRespDescriptor = $convert.base64Decode('ChVEZWxldGVHcm91cE1lbWJlclJlc3A=');
 @$core.Deprecated('Use getGroupMembersReqDescriptor instead')
 const GetGroupMembersReq$json = const {
   '1': 'GetGroupMembersReq',

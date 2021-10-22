@@ -9,7 +9,7 @@ import 'package:fim/model/message.dart' as model;
 import 'package:fim/model/recent_contact.dart';
 import 'package:fim/page/friend/friend_page.dart';
 import 'package:fim/page/group/group_info_page.dart';
-import 'package:fim/pb/conn.ext.pb.dart' as pb;
+import 'package:fim/pb/connect.ext.pb.dart' as pb;
 import 'package:fim/pb/logic.ext.pb.dart';
 import 'package:fim/net/api.dart';
 import 'package:fim/theme/color.dart';

@@ -476,35 +476,6 @@ class UpdateUserReq extends $pb.GeneratedMessage {
   void clearExtra() => clearField(4);
 }
 
-class UpdateUserResp extends $pb.GeneratedMessage {
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'UpdateUserResp', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pb'), createEmptyInstance: create)
-    ..hasRequiredFields = false
-  ;
-
-  UpdateUserResp._() : super();
-  factory UpdateUserResp() => create();
-  factory UpdateUserResp.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
-  factory UpdateUserResp.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
-  @$core.Deprecated(
-  'Using this can add significant overhead to your binary. '
-  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
-  'Will be removed in next major version')
-  UpdateUserResp clone() => UpdateUserResp()..mergeFromMessage(this);
-  @$core.Deprecated(
-  'Using this can add significant overhead to your binary. '
-  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
-  'Will be removed in next major version')
-  UpdateUserResp copyWith(void Function(UpdateUserResp) updates) => super.copyWith((message) => updates(message as UpdateUserResp)) as UpdateUserResp; // ignore: deprecated_member_use
-  $pb.BuilderInfo get info_ => _i;
-  @$core.pragma('dart2js:noInline')
-  static UpdateUserResp create() => UpdateUserResp._();
-  UpdateUserResp createEmptyInstance() => create();
-  static $pb.PbList<UpdateUserResp> createRepeated() => $pb.PbList<UpdateUserResp>();
-  @$core.pragma('dart2js:noInline')
-  static UpdateUserResp getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<UpdateUserResp>(create);
-  static UpdateUserResp? _defaultInstance;
-}
-
 class SearchUserReq extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'SearchUserReq', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pb'), createEmptyInstance: create)
     ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'key')

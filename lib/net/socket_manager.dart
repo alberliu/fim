@@ -12,7 +12,7 @@ import 'package:fim/service/recent_contact_service.dart';
 import 'package:fim/model/new_friend.dart';
 import 'package:fim/model/recent_contact.dart';
 import 'package:fim/notification/notification.dart';
-import 'package:fim/pb/conn.ext.pb.dart' as pb;
+import 'package:fim/pb/connect.ext.pb.dart' as pb;
 import 'package:fim/model/message.dart' as model;
 import 'package:fim/pb/push.ext.pb.dart';
 import 'package:fim/util/logger.dart';

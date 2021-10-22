@@ -11,6 +11,7 @@ import 'dart:core' as $core;
 
 import 'package:grpc/service_api.dart' as $grpc;
 import 'business.ext.pb.dart' as $0;
+import 'common.ext.pb.dart' as $1;
 export 'business.ext.pb.dart';
 
 class BusinessExtClient extends $grpc.Client {
@@ -22,11 +23,10 @@ class BusinessExtClient extends $grpc.Client {
       '/pb.BusinessExt/GetUser',
       ($0.GetUserReq value) => value.writeToBuffer(),
       ($core.List<$core.int> value) => $0.GetUserResp.fromBuffer(value));
-  static final _$updateUser =
-      $grpc.ClientMethod<$0.UpdateUserReq, $0.UpdateUserResp>(
-          '/pb.BusinessExt/UpdateUser',
-          ($0.UpdateUserReq value) => value.writeToBuffer(),
-          ($core.List<$core.int> value) => $0.UpdateUserResp.fromBuffer(value));
+  static final _$updateUser = $grpc.ClientMethod<$0.UpdateUserReq, $1.Empty>(
+      '/pb.BusinessExt/UpdateUser',
+      ($0.UpdateUserReq value) => value.writeToBuffer(),
+      ($core.List<$core.int> value) => $1.Empty.fromBuffer(value));
   static final _$searchUser =
       $grpc.ClientMethod<$0.SearchUserReq, $0.SearchUserResp>(
           '/pb.BusinessExt/SearchUser',
@@ -48,7 +48,7 @@ class BusinessExtClient extends $grpc.Client {
     return $createUnaryCall(_$getUser, request, options: options);
   }
 
-  $grpc.ResponseFuture<$0.UpdateUserResp> updateUser($0.UpdateUserReq request,
+  $grpc.ResponseFuture<$1.Empty> updateUser($0.UpdateUserReq request,
       {$grpc.CallOptions? options}) {
     return $createUnaryCall(_$updateUser, request, options: options);
   }
@@ -77,13 +77,13 @@ abstract class BusinessExtServiceBase extends $grpc.Service {
         false,
         ($core.List<$core.int> value) => $0.GetUserReq.fromBuffer(value),
         ($0.GetUserResp value) => value.writeToBuffer()));
-    $addMethod($grpc.ServiceMethod<$0.UpdateUserReq, $0.UpdateUserResp>(
+    $addMethod($grpc.ServiceMethod<$0.UpdateUserReq, $1.Empty>(
         'UpdateUser',
         updateUser_Pre,
         false,
         false,
         ($core.List<$core.int> value) => $0.UpdateUserReq.fromBuffer(value),
-        ($0.UpdateUserResp value) => value.writeToBuffer()));
+        ($1.Empty value) => value.writeToBuffer()));
     $addMethod($grpc.ServiceMethod<$0.SearchUserReq, $0.SearchUserResp>(
         'SearchUser',
         searchUser_Pre,
@@ -103,7 +103,7 @@ abstract class BusinessExtServiceBase extends $grpc.Service {
     return getUser(call, await request);
   }
 
-  $async.Future<$0.UpdateUserResp> updateUser_Pre(
+  $async.Future<$1.Empty> updateUser_Pre(
       $grpc.ServiceCall call, $async.Future<$0.UpdateUserReq> request) async {
     return updateUser(call, await request);
   }
@@ -117,7 +117,7 @@ abstract class BusinessExtServiceBase extends $grpc.Service {
       $grpc.ServiceCall call, $0.SignInReq request);
   $async.Future<$0.GetUserResp> getUser(
       $grpc.ServiceCall call, $0.GetUserReq request);
-  $async.Future<$0.UpdateUserResp> updateUser(
+  $async.Future<$1.Empty> updateUser(
       $grpc.ServiceCall call, $0.UpdateUserReq request);
   $async.Future<$0.SearchUserResp> searchUser(
       $grpc.ServiceCall call, $0.SearchUserReq request);

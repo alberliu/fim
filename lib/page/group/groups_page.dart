@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:fim/pb/common.ext.pb.dart';
 import 'package:fim/service/preferences.dart';
 import 'package:fim/model/message.dart';
 import 'package:fim/net/api.dart';
@@ -29,7 +30,7 @@ class _GroupsPageState extends State<GroupsPage> {
 
   initData() async {
     var getGroupsResp =
-        await logicClient.getGroups(GetGroupsReq());
+        await logicClient.getGroups(Empty());
     groups = getGroupsResp.groups;
     loading = false;
     setState(() {});

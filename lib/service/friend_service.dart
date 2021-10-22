@@ -1,4 +1,4 @@
-import 'package:fim/service/preferences.dart';
+import 'package:fim/pb/common.ext.pb.dart';
 import 'package:fim/net/api.dart';
 import 'package:fim/pb/logic.ext.pb.dart';
 import 'package:fim/util/logger.dart';
@@ -16,7 +16,7 @@ class FriendService with ChangeNotifier {
 
     GetFriendsResp resp;
 
-    resp = await logicClient.getFriends(GetFriendsReq());
+    resp = await logicClient.getFriends(Empty());
 
     friendList = resp.friends;
 
